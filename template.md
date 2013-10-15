@@ -5,7 +5,16 @@ Title
 
 ## Section1
 
+Give these a try:
+
+- **Bold** and *Italic*
+- ```Code blocks```
+
 ## Section2
+
+> Here's how to quote some text.
+
+### Sub-section A
 
 ## Additional Resources
 
@@ -15,4 +24,4 @@ Title
 
 As always, if you need help with the steps outlined in this HowTo, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
-Article Submitted by: [Author's name](https://plus.google.com/21-digit_Google+_Profile_ID_number?rel=author) &bull; DATE
+<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/21-digit_Google+_Profile_ID_number?rel=author" target="_blank">Author's Name</a> &bull; DATE</div></p>
