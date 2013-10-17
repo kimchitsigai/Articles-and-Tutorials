@@ -57,13 +57,13 @@ Once you have an SSH key pair that you would like to use to connect to your VPS,
 2.  Then, from the top of the home screen, click on ```Edit``` and select ```Settings```.
 3.  On the left side of the menu, expand the ```Connection``` section and highlight ```SFTP```.
 
-![FileZilla Key Manager](\fz_key_mngr.png)
+![FileZilla Key Manager](./images/fz_key_mngr.png)
 
 4.  Finally, click on the ```[Add keyfile...]``` button and browse your local machine's directories and select your Public Key file.
 5.	Then, again from the top of FileZilla's home screen, click on ```File``` and select ```Site Manager```.
 6.	Next, on the left side of the Site Manager, click on the ```New Site``` button and type a unique name, under ```My Sites``` that will allow you to easily identify this particular remote server in the future.
 
-![FileZilla Site Manager](\fz_site_mngr.png)
+![FileZilla Site Manager](./images/fz_site_mngr.png)
 
 7.	Now, under the ```General``` tab, fill in the ```Host``` (with either an IP address or [FQDN](https://www.digitalocean.com/community/articles/how-to-set-up-a-host-name-with-digitalocean)) and ```Port``` fields (default is 22).
 8.	In the ```Protocol``` dropdown menu, select ```SFTP - SSH File Transfer Protocol```.
