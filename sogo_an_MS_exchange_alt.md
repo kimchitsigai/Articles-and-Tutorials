@@ -1,13 +1,11 @@
 # ~~~~~~~~~~ DRAFT ~~~~~~~~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted* 
-How To Install & Configure SOGo - an Open-Source Alternative to Microsoft Exchange
+How To Install & Configure SOGo - an Open-Source Alternative to Microsoft Exchange - on Ubuntu Server
 =====
 
 ### Introduction
 
-SOGo is a free and modern scalable groupware server. It offers shared calendars, address books, and emails through your favourite Web browser and by using a native client such as Mozilla Thunderbird and Lightning.
-
-SOGo is standard-compliant. It supports CalDAV, CardDAV, GroupDAV, iMIP and iTIP and reuses existing IMAP, SMTP and database servers - making the solution easy to deploy and interoperable with many applications.
+SOGo is a free and modern scalable groupware server. It offers shared calendars, address books, and emails through your favorite Web browser and by using a native client such as Mozilla Thunderbird and Lightning. In addition, SOGo offers native Microsoft Outlook compatibility using the [OpenChange](http://www.openchange.org/) backend. This means that  Microsoft Outlook 2003, 2007 and 2010 can talk directly to SOGo &ndash; just like if it was a Microsoft Exchange server; without the need for additional plugins required to make this work.
 
 ## SOGo Features
 
@@ -17,152 +15,314 @@ Thunderbird and Lightning
 * Improved integration with Mozilla Thunderbird and Lightning by using the SOGo Connector and the SOGo Integrator
 * Two-way synchronization support with any SyncML-capable devices (BlackBerry, Palm, Windows CE, etc.) by using the Funambol SOGo Connector
 
-Standard protocols such as CalDAV, CardDAV, GroupDAV, HTTP, IMAP and SMTP are used to communicate with the SOGo platform or its sub-components. Mobile devices supporting the SyncML standard use the Funambol middleware to synchronize information.
-
-To install and configure the native Microsoft Outlook compatibility layer, please refer to the [SOGo Native Microsoft Outlook Configuration Guide]().
+SOGo is standard-compliant. It supports CalDAV, CardDAV, GroupDAV, iMIP and iTIP and reuses existing IMAP, SMTP and database servers &ndash; making the solution easy to deploy and interoperable with many applications. Mobile devices supporting the SyncML standard use the Funambol middleware to synchronize information.
 
 ## Prerequisites
 
 SOGo reuses many components in an infrastructure. Thus, it requires the following:
 
 * Database server (e.g. [MySQL](https://www.digitalocean.com/community/community_tags/mysql) or [PostgreSQL](https://www.digitalocean.com/community/community_tags/postgresql));
-* LDAP server (e.g. OpenLDAP);
+* LDAP server (e.g. [OpenLDAP](https://www.digitalocean.com/community/articles/how-to-install-and-configure-a-basic-ldap-server-on-an-ubuntu-12-04-vps));
 * SMTP server (e.g. [Postfix](https://www.digitalocean.com/community/articles/how-to-install-and-setup-postfix-on-ubuntu-12-04));
 * IMAP server (e.g. Dovecot).
 
-This guide  assumes that (i.) all of those components are running on the same server (i.e. "localhost" or "127.0.0.1") (ii.) on which you will install SOGo.
+## Assumptions
 
-## Installation
+This guide  assumes that:
 
-SOGo supports the following 32-bit and 64-bit operating systems:
+* All of the components listed above are running on the same server (i.e. `localhost` or `127.0.0.1`); and
+* That SOGo will be installed on the same server.
+* You will be executing all of the commands that follow as the `root` user. You can switch from a local user to the `root` user by executing:
 
-* Ubuntu 8.10 (Intrepid) to 12.04 (Precise)
-* Community ENTerprise Operating System (CentOS) 5 and 6
-* [Debian GNU/Linux 5.0 (Lenny) to 7.0 (Wheezy)](http://www.sogo.nu/english/nc/support/faq/article/how-to-install-sogo-on-debian-2.html)
-* Red Hat Enterprise Linux (RHEL) Server 5 and 6
+		sudo su
 
-### Ubuntu Precise Pangolin (12.04)
+* You have previously installed the `vim` text editor:
 
-If you are running Ubuntu, you must first add the SOGo repository to your `apt source list`, by executing the following commands:
+		apt-get -y install vim
 
-	sudo vi /etc/apt/sources.list
+	Within `vim`, the keystrokes you'll use the most are:
 
-Then, on your keyboard, tap on the `i` key and append the line, below, to the end of your current list:
+	* `i` (insert)
+	* `Esc` (Escape key)
+	* `:` (colon)
+	* `w` (write)
+	* `q` (quit)
+	* The arrow keys (to manipulate the cursor)
+	* Finally, the `Backspace` & `Delete` keys 
 
-	deb http://inverse.ca/ubuntu precise precise
+## Prepatory Steps
 
-Then, tap the following keystrokes: `Esc` followed by `:` and `w` and `q` and, finally, `enter`.
+First, check that your hostname and Fully Qualified Domain Name (FQDN) are properly set, by executing (which should yield a result such as `mail` (or any hostname of your choice):
+
+	hostname
+
+Then, execute:
+
+	hostname -f
+
+Which should yield a result such as `mail.yourdomain.tld`.
+
+#### Edit Hostname
+
+A server's hostname can be edited by executing:
+
+	vim /etc/hostname
+
+Then, tapping on the `i` key; followed by typing the hostname of your choice. To save & exit, tap the `Esc` key; then `:`; followed by `w`; `q` and `Enter`.
+
+#### Edit FQDN
+
+To edit a server's FQDN, execute:
+
+	vim /etc/hosts
+
+Then, tap on the `i` key and modify your hosts file so that it resembles the following (**obviously,** substituting the [hostname], [yourdomain], [tld], and [YourIP] values):
+
+	127.0.0.1	localhost.localdomain	localhost
+	127.0.1.1	hostname.yourdomain.tld	hostname
+	YourIP		hostname.yourdomain.tld	hostname
+
+#### Reload Hostname and/or FQDN
+
+The following step is only necessary if you edited either the server's (i) hostname or (ii) FQDN:
+
+	service hostname restart
+
+### Add SOGo Repository & GPG Public Key
+
+Append the SOGo repository to your `apt source list`, by copying & pasting both lines, below, into the command line and pressing `Enter`:
+
+	echo -e "deb http://inverse.ca/ubuntu-nightly precise precise\n\
+	deb-src http://inverse.ca/ubuntu-nightly precise precise" > /etc/apt/sources.list.d/SOGo.list
 
 Next, you must add SOGo's GPG public key to Ubuntu's `apt keyring`. To do so, execute the following commands:
 
-	sudo apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
+	apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
 
 Then, update your lists of available software packages, by executing:
 
-	sudo apt-get update 
+	apt-get update 
 
-Finally, execute:
+## Active Directory/ Domain Controller
 
-	sudo apt-get -y install sogo
+Install the Samba4 packages and 
 
-Next, install the following additional packages:
+	apt-get -y install acl attr samba4 winbind4 krb5-user
 
-	sudo apt-get -y install binutils-doc gcc-4.6-locales gcc-4.6-multilib libmudflap0-4.6-dev gcc-4.6-doc libgcc1-dbg libgomp1-dbg libquadmath0-dbg libmudflap0-dbg binutils-gold gnustep-base-doc gnustep-make-doc gobjc-4.6-multilib libobjc3-dbg glibc-doc libcache-memcached-perl nginx mysql-server
+Next, add the options `acl` and `user_xattr` to your mount point by executing:
 
-Then, create a custom nginx config file for SOGo. To do so, execute:
+	vim /etc/fstab
 
-	sudo vi /etc/nginx/sites-enabled/sogo.yourdomain.tld
+Then, tap on the `i` key and modify your settings so that it resembles the following:
 
-Next, copy the following and paste it into the newly-created file (replace `sogo.yourdomain.tld` with your FQDN):
+	LABEL=DOROOT	/	ext4	acl,user_xattr,errors=remount-ro		0	1
 
-	server {
+Next, execute:
 
-		listen 80 default;
-		server_name sogo.yourdomain.tld;
+	mount / remount
 
-		# redirect http to https
-		rewrite ^ https://$server_name$request_uri? permanent; 
-	}
-	server {
+Given that some useful files are missing from the Samba4 package found in the repository, we'll recompile it by executing the following commands, one-by-one:
 
-		listen 443;
-		server_name sogo.yourdomain.tld; 
-		root /usr/lib/GNUstep/SOGo/WebServerResources/; 
-		ssl on;
-		ssl_certificate /etc/nginx/sslcerts/mycertificate.crt;
-		ssl_certificate_key /etc/nginx/sslcerts/mykey.key;
-		location = / {
-		rewrite ^ https://$server_name/SOGo; 
-		allow all; 
-		}
-		location ^~/SOGo {
-		proxy_pass http://127.0.0.1:20000; 
-		proxy_redirect http://127.0.0.1:20000 default; 
+	mkdir ~/Samba4
+	cd ~/Samba4
+	apt-get install dpkg-dev
+	apt-get build-dep samba4
+	apt-get source samba4
+	cd samba4-4.0.1+dfsg1/
+	dpkg-buildpackage
+	make install
 
-		# forward user's IP address 
-		proxy_set_header X-Real-IP $remote_addr; 
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; 
-		proxy_set_header Host $host; 
-		proxy_set_header x-webobjects-server-protocol HTTP/1.0; 
-		proxy_set_header x-webobjects-remote-host 127.0.0.1; 
-		proxy_set_header x-webobjects-server-name $server_name; 
-		proxy_set_header x-webobjects-server-url $scheme://$host; 
-		proxy_connect_timeout 90;
-		proxy_send_timeout 90;
-		proxy_read_timeout 90;
-		proxy_buffer_size 4k;
-		proxy_buffers 4 32k;
-		proxy_busy_buffers_size 64k;
-		proxy_temp_file_write_size 64k;
-		client_max_body_size 50m;
-		client_body_buffer_size 128k;
-		break;
-		}
-		location /SOGo.woa/WebServerResources/ {
-		alias /usr/lib/GNUstep/SOGo/WebServerResources/;
-		allow all;
-		}
-		location /SOGo/WebServerResources/ {
-		alias /usr/lib/GNUstep/SOGo/WebServerResources/; 
-		allow all; 
-		}
-		location ^/SOGo/so/ControlPanel/Products/([^/]*)/Resources/(.*)$ {
-		alias /usr/lib/GNUstep/SOGo/$1.SOGo/Resources/$2; 
-		}
-		location ^/SOGo/so/ControlPanel/Products/[^/]*UI/Resources/.*\.(jpg|png|gif|css|js)$ {
-		alias /usr/lib/GNUstep/SOGo/$1.SOGo/Resources/$2; 
-		}
-	}
+Next, delete the initial configuration generated by the Samba4 package:
 
-Nginx will rewrite all unsecured requests on port 80 to https on port 443. Consequently, ensure that these two ports are open if you have deployed a firewall. *See* [How to Setup a Firewall with UFW on an Ubuntu and Debian Cloud Server](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server); or [How To Setup a Basic IP Tables Configuration on Centos 6](https://www.digitalocean.com/community/articles/how-to-setup-a-basic-ip-tables-configuration-on-centos-6).
+	rm /etc/samba/smb.conf
+	rm -R /var/lib/samba/private/*
+	rm -R /var/lib/samba/sysvol/*
 
-### RPM-based Distributions: Red Hat or CentOS
+The `BIND` package was automatically installed when we installed Samba4. However, it can be uninstalled because Samba's internal DNS server will be used, instead:
 
-SOGo can be installed using the yum utility. To do so, first create the 
-`/etc/yum.repos.d/inverse.repo` configuration file with the following content:
- 
-	[SOGo]
-	name=Inverse SOGo Repository
-	baseurl=http://inverse.ca/downloads/SOGo/RHEL6/$basearch
-	gpgcheck=0
+	apt-get -y remove --purge bind9
 
-Some of the softwares on which SOGo depends are available from the repository of RepoForge (previously known as RPMforge). To add RepoForge to your packages sources, download and install the appropriate RPM package from [http://packages.sw.be/rpmforge-release/](http://packages.sw.be/rpmforge-release/). Also make sure you enabled the “rpmforge-extras” repository. For more information on using RepoForge, visit [http://repoforge.org/use/](http://repoforge.org/use/)
+Now, you are ready to provision Samba4 with your environment's variables (replace `YOURDOMAIN`, `yourdomain.tld`, and `SambaPWD` with values of your choice):
 
-Once the yum configuration file has been created, you are now ready to install SOGo and its dependencies. To do so, proceed with the following command:
+	 samba-tool domain provision --domain=YOURDOMAIN --adminpass=SambaPWD --dns-backend=SAMBA_INTERNAL --server-role=dc --function-level=2008_R2 --use-xattr=yes --use-rfc2307 --realm=yourdomain.tld
 
-	yum install sogo
+The script will generate your directory for Samba4. In the end, it will present a summary like this:
 
-This will install SOGo and its dependencies such as GNUstep, the SOPE packages and memcached. Once the base packages are installed, you need to install the proper database connector suitable for your environment.
+	Once the above files are installed, your Samba4 server will be ready to use
+	Server Role:           active directory domain controller
+	Hostname:              server
+	NetBIOS Domain:        YOURDOMAIN
+	DNS Domain:            yourdomain.tld
+	DOMAIN SID:            S-1-5-21-1716394670-2609614925-1081274792
 
-You need to install `sope49-gdl1-postgresql` for the PostgreSQL database system or `sope49-gdl1-mysql` for MySQL. The installation command will thus look like this:
+In order to have your domain and sharing, you have to manually change the configuration file with the command:
 
-	yum install sope49-gdl1-postgresql
+	vim /etc/samba/smb.conf
 
-Once completed, SOGo will be fully installed on your server. You are now ready to configure it.
+then add the following lines in the `[global]` section:
 
-## Configuration
+	template shell = /usr/sbin/nologin
+	template homedir = /home/%ACCOUNTNAME%
 
-In SOGo, users' applications settings are stored in `/etc/sogo/sogo.conf`. You can use your favorite text editor to modify the file.
+Change your DNS in order to use Samba4 as main DNS server on your server, by executing:
+
+	vim /etc/resolv.conf
+
+Then, tap on the `i` key and modify your settings so that it resembles the following:
+
+	domain yourdomain.tld
+	search yourdomain.tld
+	nameserver 127.0.0.1
+	nameserver 8.8.8.8
+	nameserver 8.8.4.4
+
+Now, restart Samba4:
+
+	service samba4 restart
+
+## OpenChange Installation
+
+To install OpenChange, execute:
+
+	apt-get -y install openchangeserver sogo-openchange openchangeproxy openchange-ocsmanager openchange-rpcproxy
+
+Next, provision Samba4 with the OpenChange schema:
+
+	openchange_provision
+
+Then, create an internal database for OpenChange:
+
+	openchange_provision --openchangedb
+
+Now, enable the MAPI procotol in Samba4:
+
+	vim /etc/samba/smb.conf
+
+Add the following lines somewhere in [global] section of the configuration file:
+
+	dcerpc endpoint servers = +epmapper, +mapiproxy
+	dcerpc_mapiproxy:server = true
+	dcerpc_mapiproxy:interfaces = exchange_emsmdb, exchange_nsp, exchange_ds_rfr
+
+## SOGo Installation
+
+Sogo is the “backend“ of OpenChange. Install it with the following command:
+
+	apt-get -y install sogo
+
+## Install PostgreSQL Database
+
+	apt-get -y install postgresql sope4.9-gdl1-postgresql
+
+Next, create the SOGo database in PostgreSQL:
+
+	su - postgres
+	createuser --no-superuser --no-createdb --no-createrole --encrypted --pwprompt sogo
+	createdb -O sogo sogo
+	exit
+	echo "host sogo sogo 127.0.0.1/32 md5" >> /etc/postgresql/9.1/main/pg_hba.conf
+
+Finally, restart PostgreSQL:
+
+	service postgresql restart
+
+## Configure SOGo
+
+	su - sogo -s /bin/bash
+	defaults write sogod SOGoTimeZone "America/Chicago"
+	defaults write sogod OCSFolderInfoURL "postgresql://sogo:PostgreSQL_pwd@localhost:5432/sogo/sogo_folder_info"
+	defaults write sogod SOGoProfileURL "postgresql://sogo:PostgreSQL_pwd@localhost:5432/sogo/sogo_user_profile"
+	defaults write sogod OCSSessionsFolderURL "postgresql://sogo:PostgreSQL_pwd@localhost:5432/sogo/sogo_sessions_folder"
+	defaults write sogod OCSEMailAlarmsFolderURL "postgresql://sogo:PostgreSQL_pwd@localhost:5432/sogo/sogo_alarm_folder"
+	defaults write sogod SOGoUserSources '({CNFieldName = displayName;  IDFieldName = cn; UIDFieldName = sAMAccountName; IMAPHostFieldName =; baseDN = "cn=Users,dc=yourdomain,dc=tld"; bindDN = "cn=Administrator,cn=Users,dc=youdomain,dc=tld"; bindPassword = SambaPWD; canAuthenticate = YES; displayName = "Shared Addresses"; hostname = "localhost"; id = public; isAddressBook = YES; port = 389;})'
+	defaults write sogod WONoDetach YES
+	defaults write sogod WOLogFile -
+	defaults write sogod WOPidFile /tmp/sogo.pid
+	defaults write sogod SOGoDraftsFolderName "Drafts"
+	defaults write sogod SOGoSentFolderName "Sent"
+	defaults write sogod SOGoTrashFolderName "Trash"
+	defaults write sogod SOGoIMAPServer "localhost:144"
+	defaults write sogod SOGoSieveServer "sieve://127.0.0.1:4190"
+	defaults write sogod SOGoSieveScriptsEnabled "YES"
+
+#### Optional
+
+If you want to allow users to add their own IMAP account in SOGo, add the following command:
+
+	defaults write sogod SOGoMailAuxiliaryUserAccountsEnabled YES
+
+Logout of the `sogo` user & return to the `root` user
+
+	exit
+
+Create a symbolic link to allow Samba4 to use the SOGo configuration file:
+
+	ln -s ~sogo/GNUstep ~root/GNUstep
+
+There is a small bug in the `init.d` of Sogo that holds up the start-up process. You must edit the `init` file:
+
+	vim /etc/init.d/sogo
+
+and add the `-b` argument at lines 70 and 88:
+
+	#Line 70
+	if ! start-stop-daemon -b -c $USER --quiet --start --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+	# Line 88
+	start-stop-daemon -b -c $USER --quiet --start --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+
+#### Restart SOGo & Samba4:
+
+	service samba4 restart && nohup /etc/init.d/sogo restart &
+
+## Cyrus IMAP Installation
+
+The installation of Cyrus-Imap is done with the following command:
+
+	apt-get -y install cyrus-admin-2.4 cyrus-imapd-2.4 sasl2-bin
+
+#### Configure saslauth Authentication
+
+Cyrus needs to use Saslauth system in order to authenticate its users. All small setup of Sasl in order to use Samba4.
+
+	vim /etc/default/saslauthd
+
+and change the following lines:
+
+	...
+	START=yes
+	...
+	MECHANISMS="ldap"
+
+Create the following file with the command
+
+	vim /etc/saslauthd.conf
+
+and paste the following content and by changing of course the Administrator password:
+
+	ldap_servers: ldapi://%2Fvar%2Flib%2Fsamba%2Fprivate%2Fldapi
+	ldap_search_base: dc=yourdomain,dc=tld
+	ldap_filter: (cn=%u)
+	ldap_version: 3
+	ldap_auth_method: bind
+	ldap_bind_dn: Administrator@yourdomain.tld
+	ldap_bind_pw: pass1234
+	ldap_scope: sub
+
+Restart the service:
+
+	service saslauthd restart
+
+You can also check that you authentication works:
+
+	testsaslauthd -u administrator -p pass1234
+
+#### Cyrus Configuration
+
+	vim /etc/cyrus.conf
+
+Add the following line in SERVICES section:
+
+	imapnoauth      cmd="imapd -U 30 -N" listen="127.0.0.1:144" prefork=0 maxchild=100
 
 ## Additional Resources
 
