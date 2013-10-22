@@ -50,7 +50,7 @@ This guide  assumes that:
 	* The arrow keys (to manipulate the cursor)
 	* Finally, the `Backspace` & `Delete` keys 
 
-## Prepatory Steps
+## Preparatory Steps
 
 First, check that your hostname and Fully Qualified Domain Name (FQDN) are properly set, by executing (which should yield a result such as `mail` (or any hostname of your choice):
 

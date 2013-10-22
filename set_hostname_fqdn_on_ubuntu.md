@@ -1,7 +1,7 @@
 # ~~~~~~~~~~ DRAFT ~~~~~~~~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted*
 
-Setting Your Ubuntu Server's Hostname & Fully Qualified Domain Name (FQDN)
+Setting Ubuntu Server's Hostname & Fully Qualified Domain Name (FQDN)
 =
 
 ### Introduction
@@ -23,18 +23,34 @@ Hostnames are composed of series of labels concatenated with dots, as are all do
 
 Each label must be between 1 and 63 characters long, and the entire hostname (including the delimiting dots) has a maximum of 255 characters.
 
+## Checking Current Hostname & FQDN
+
+To check your hostname, execute:
+
+	hostname
+
+and the current hostname, if any, will be displayed. Then, to check the existing FQDN, if any, execute:
+
+	hostname -f
+
+which should yield a result such as `pbx.yourdomain.tld`.
+
+## Naming Conventions
+
+So long as the above parameters are complied with, one can use just about any name as a hostname. Many server admins. use planets, places or loosely-labeled abbreviations of a particular servers basic purpose, e.g., `pbx`, `web1`, `web2`, `mail`, `ns1` (for nameserver) and so on. Have fun with hostnames if you'd like and utilize the names of people you know.
+
 ## Setting the Hostname
 
-Enter following commands to set the hostname, replacing plato with the hostname of your choice:
+Execute the following commands to set the hostname, replacing `example` with the hostname of your choice:
 
-	echo "plato" > /etc/hostname
+	echo "example" > /etc/hostname
 	hostname -F /etc/hostname
 
-If it exists, edit the file `/etc/default/dhcpcd` and comment out the `SET_HOSTNAME` directive (obviously, you can use whichever text editor you wish; but this guide assumes that you have installed the [vim text editor](https://www.digitalocean.com/community/articles/installing-and-using-the-vim-text-editor-on-a-cloud-server)); by executing:
+*If* it exists, edit the file `/etc/default/dhcpcd` and comment out the `SET_HOSTNAME` directive (obviously, you can use whichever text editor you wish; but this guide assumes that you have installed the [vim text editor](https://www.digitalocean.com/community/articles/installing-and-using-the-vim-text-editor-on-a-cloud-server)); by executing:
 
-	vim /etc/default/dhcpcd
+	sudo vim /etc/default/dhcpcd
 
-(Then, tap on the `i` key and use the arrow keys on your keyboard to navigate the text area. Then,
+(Then, tap on the `i` key and use the arrow keys on your keyboard to navigate the text area. Then, edit the `SET_HOSTNAME` directive by inserting a `#` symbol at the beginning of the line, i.e.
 
 	#SET_HOSTNAME='yes'
 
@@ -42,13 +58,21 @@ If it exists, edit the file `/etc/default/dhcpcd` and comment out the `SET_HOSTN
 
 Execute
 
-	vim /etc/hosts
+	sudo vim /etc/hosts
 
-Then, tap on the `i` key and modify your hosts file so that it resembles the following (**obviously,** substituting the [hostname], [yourdomain], [tld], and [YourIP] values):
+Then, tap on the `i` key and modify your hosts file so that it resembles the following (**obviously,** substituting the `hostname`, `yourdomain`, `tld`, and `YourIP` values):
 
 	127.0.0.1	localhost.localdomain	localhost
 	127.0.1.1	hostname.yourdomain.tld	hostname
 	YourIP		hostname.yourdomain.tld	hostname
+
+Finally, execute:
+
+	sudo service hostname restart
+
+## DNS Records
+
+Another relevant place where one needs to set hostnames are in [Domain Name System (DNS)](http://en.wikipedia.org/wiki/Domain_Name_System) records. *See* [How To Set Up a Host Name with DigitalOcean](https://www.digitalocean.com/community/articles/how-to-set-up-a-host-name-with-digitalocean).
 
 ## Additional Resources
 
