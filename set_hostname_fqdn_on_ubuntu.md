@@ -1,82 +1,101 @@
-# ~~~~~~~~~~ DRAFT ~~~~~~~~~~
-*[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted*
-
-Setting Ubuntu Server's Hostname & Fully Qualified Domain Name (FQDN)
+Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu Server 12.04 LTS
 =
 
 ### Introduction
 
-A hostname is a label or nickname that is assigned to a computer connected to a network and that is used to identify the machine in various forms of electronic communication such as the World Wide Web and/or email. Hostnames are important because they form part of a computer's Fully Qualified Domain Name (FQDN).
+A hostname is a label or nickname that is assigned to a computer connected to a network and that is used to identify the machine in various forms of electronic communication within an internal network. Hostnames are also important because they form part of a computer's Fully Qualified Domain Name (FQDN). Assigning a FQDN to a computer makes it reachable via the  public [Domain Name System (DNS)](http://en.wikipedia.org/wiki/Domain_Name_System), i.e. the Internet.
 
 ## Hostname Requirements
 
-Internet standards for protocols mandate that component hostname labels may contain only the [ASCII](http://en.wikipedia.org/wiki/ASCII) letters `a` through `z` (in a case-insensitive manner), the digits `0` through `9`, and the hyphen (`-`). No other symbols, punctuation characters, or white space are permitted.
+Internet standards for protocols mandate that component local host names may contain, **only**:
 
-In addition to the above technical requirements, the only practical requirement of a server's hostname, for your environment(s), is that it should be something unique to the other servers within a particular domain.
+*	the [ASCII](http://en.wikipedia.org/wiki/ASCII) letters `a` through `z` (in a case-insensitive manner);
+*	the digits `0` through `9`; and
+*	the hyphen (`-`).
+
+No other symbols, punctuation characters, or white space are permitted.
+
+**Practice Tip:** In addition to the above technical requirements, the only practical requirement of a server's hostname, for your environment(s), is that it should be something unique to the other servers within a particular domain.
 
 ### Restrictions on valid host names
 
-Hostnames are composed of series of labels concatenated with dots, as are all domain names. For example, let's break `mail.google.com` into its components:
+Hostnames are composed of series of labels concatenated with dots, as are all domain names. For example, let's break `mail.google.com` into its component parts:
 
-*	`mail` is the host; and
-*	`google.com` is the domain.
+*	`mail` is the host or local hostname; and
+*	`google.com` is the domain or parent domain name.
 
-Each label must be between 1 and 63 characters long, and the entire hostname (including the delimiting dots) has a maximum of 255 characters.
+Each label **must**:
+
+*  be between 1 and 63 characters long; and
+*  the entire hostname (including the domain & delimiting dots) has a maximum of 255 characters.
 
 ## Checking Current Hostname & FQDN
 
-To check your hostname, execute:
+This article assumes that you are familiar with `Step Seven — Log In To Your Droplet` of [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server).
+
+To check your hostname, open a terminal or shell session and execute:
 
 	hostname
 
-and the current hostname, if any, will be displayed. Then, to check the existing FQDN, if any, execute:
+The current hostname, if any, will be displayed. Then, to check the existing FQDN, if any, execute:
 
 	hostname -f
 
-which should yield a result such as `pbx.yourdomain.tld`.
+which should yield a result such as `localhost` (which signifies that no FQDN is set) or `pbx.yourdomain.tld`.
 
 ## Naming Conventions
 
-So long as the above parameters are complied with, one can use just about any name as a hostname. Many server admins. use planets, places or loosely-labeled abbreviations of a particular servers basic purpose, e.g., `pbx`, `web1`, `web2`, `mail`, `ns1` (for nameserver) and so on. Have fun with hostnames if you'd like and utilize the names of people you know.
+So long as the above parameters are complied with, one can use just about any name as a hostname. Many server admins. use planets, places or loosely-labeled abbreviations of a particular server's basic purpose, e.g., `pbx`, `web1`, `web2`, `mail`, `ns1` (for nameserver) and so on. Feel free to have fun with hostnames, if you'd like.
 
 ## Setting the Hostname
 
-Execute the following commands to set the hostname, replacing `example` with the hostname of your choice:
+A particular computer's hostname can be changed at any time. To set the initial hostname or subsequently change it, execute the following commands in a terminal or shell session (obviously, you can use whichever text editor you wish; but this guide assumes that you have installed the [vim text editor](https://www.digitalocean.com/community/articles/installing-and-using-the-vim-text-editor-on-a-cloud-server)):
 
-	echo "example" > /etc/hostname
-	hostname -F /etc/hostname
+	sudo vim /etc/hostname
 
-*If* it exists, edit the file `/etc/default/dhcpcd` and comment out the `SET_HOSTNAME` directive (obviously, you can use whichever text editor you wish; but this guide assumes that you have installed the [vim text editor](https://www.digitalocean.com/community/articles/installing-and-using-the-vim-text-editor-on-a-cloud-server)); by executing:
+Then, tap on the `i` key and use the arrow keys on your keyboard to navigate the text area. Next, enter the hostname of your choice. To save & exit, tap the `Esc` key; then, the `:` key; followed by the `w` key; the `q` key; and, finally, `Enter`.
 
+>*If* it exists, edit the file `/etc/default/dhcpcd` and comment out the `SET_HOSTNAME` directive, by executing:
+>
 	sudo vim /etc/default/dhcpcd
-
-(Then, tap on the `i` key and use the arrow keys on your keyboard to navigate the text area. Then, edit the `SET_HOSTNAME` directive by inserting a `#` symbol at the beginning of the line, i.e.
-
+>
+>Then, insert the `#` symbol at the beginning of the line that begins with `SET_HOSTNAME=`, as shown, below:
+>
 	#SET_HOSTNAME='yes'
-
-## Setting the Fully Qualified Domain Name (FQDN)
-
-Execute
-
-	sudo vim /etc/hosts
-
-Then, tap on the `i` key and modify your hosts file so that it resembles the following (**obviously,** substituting the `hostname`, `yourdomain`, `tld`, and `YourIP` values):
-
-	127.0.0.1	localhost.localdomain	localhost
-	127.0.1.1	hostname.yourdomain.tld	hostname
-	YourIP		hostname.yourdomain.tld	hostname
 
 Finally, execute:
 
 	sudo service hostname restart
 
+You can verify that the hostname was properly set by, again, executing:
+
+	hostname
+
+## Setting the Fully Qualified Domain Name (FQDN)
+
+In a terminal or shell, execute:
+
+	sudo vim /etc/hosts
+
+Then, tap on the `i` key and use the arrow keys on your keyboard to navigate the text area. Modify your `hosts` file so that it resembles the following (**obviously,** substituting the `hostname`, `yourdomain`, `tld`, and `YourIP` values with your own):
+
+	127.0.0.1	localhost.localdomain	localhost
+	127.0.1.1	hostname.yourdomain.tld	hostname
+	YourIP		hostname.yourdomain.tld	hostname
+
+To save & exit, tap the `Esc` key; then, the `:` key; followed by the `w` key; the `q` key; and, finally, `Enter`.
+
+You can verify that the FQDN was properly set by, again, executing:
+
+	hostname -f
+
 ## DNS Records
 
-Another relevant place where one needs to set hostnames are in [Domain Name System (DNS)](http://en.wikipedia.org/wiki/Domain_Name_System) records. *See* [How To Set Up a Host Name with DigitalOcean](https://www.digitalocean.com/community/articles/how-to-set-up-a-host-name-with-digitalocean).
+If you want your remote server to be reachable over the internet via its FQDN, then you need to create the relevant DNS records. *See* [How To Set Up a Host Name with DigitalOcean](https://www.digitalocean.com/community/articles/how-to-set-up-a-host-name-with-digitalocean).
 
 ## Additional Resources
 
 *	[Ubuntu Server 12.04 LTS Guide](https://help.ubuntu.com/12.04/serverguide/index.html)
+*	[Initial Server Setup with Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04)
 
-# ~~~~~~~~~~ DRAFT ~~~~~~~~~~
-*[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted*
+<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; October 22, 2013</div></p>
