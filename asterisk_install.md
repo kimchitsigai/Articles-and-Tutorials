@@ -121,11 +121,23 @@ To logout of the Asterisk CLI, simply execute:
 
 ## Security
 
-As with any other server, you are best advised to employ security measures. At a minimum, you should review and deploy the following:
+Any server accessible from the public Internet should be security hardened, and an Asterisk IP-PBX is no exception. Security best practices are not within the scope of this article. However, at a minimum, you should review and deploy the following security measures:
 
 * [How To Protect SSH with fail2ban on Ubuntu 12.04](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04);
 * [How To Install DenyHosts on Ubuntu 12.04](https://www.digitalocean.com/community/articles/how-to-install-denyhosts-on-ubuntu-12-04); and
-* [How to Setup a Firewall with UFW on an Ubuntu and Debian Cloud Server](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server).
+* [How to Setup a Firewall with UFW on an Ubuntu and Debian Cloud Server](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server), and open the following ports, for the initial setup and testing phase:
+	*	1720 (TCP)
+	*	2000 (TCP)
+	*	2727 (UDP)
+	*	4520 (UDP)
+	*	4569 (UDP)
+	*	5000 (UDP)
+	*	5038 (TCP)
+	*	5060 (TCP & UDP)
+	*	5061 (TCP)
+	*	10000-20000 (UDP)
+
+**Note:** Remember to close any unused ports once you deploy your Asterisk server into production.
 
 ## Configuration
 
@@ -133,6 +145,7 @@ To continue configuring Asterisk, check out the [Quick Start Guide](http://www.a
 
 ## Additional Resources
 
+* [Asterisk Wiki](https://wiki.asterisk.org/wiki/dashboard.action)
 * [Official Asterisk site](http://www.asterisk.org/)
 * [Asterisk Support Forums](http://forums.asterisk.org/)
 * [Asterisk Internet Relay Chat (IRC)](http://www.asterisk.org/community/discuss)
