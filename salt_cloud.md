@@ -3,7 +3,7 @@ Automated Provisioning of DigitalOcean Cloud Servers with Salt Cloud on Ubuntu 1
 
 ### Introduction
 
-SaltStack is an open-source cloud deployment, configuration management, remote execution & monitoring package. You may not have heard of [SaltStack](http://saltstack.org), but you might be familiar with [Puppet](https://www.digitalocean.com/community/articles/how-to-install-puppet-on-a-digitalocean-vps) or [Chef](https://www.digitalocean.com/community/articles/how-to-install-chef-and-ruby-with-rvm-on-a-ubuntu-vps). Salt is a similar tool, but it is relatively lightweight as far as resources and requirements and a growing number of users consider it much easier to use.
+Salt Stack is an open-source cloud deployment, configuration management, remote execution & monitoring package. You may not have heard of [Salt Stack](http://saltstack.org), but you might be familiar with [Puppet](https://www.digitalocean.com/community/articles/how-to-install-puppet-on-a-digitalocean-vps) or [Chef](https://www.digitalocean.com/community/articles/how-to-install-chef-and-ruby-with-rvm-on-a-ubuntu-vps). Salt is a similar tool, but it is relatively lightweight as far as resources and requirements and a growing number of users consider it much easier to use.
 
 This tutorial aims to provide the reader with a simplified, basic setup of an operable Salt Cloud master server; which DigitalOcean users can employ to automate the process of creating 1, 2 or a fleet of cloud servers.
 
@@ -11,21 +11,19 @@ This tutorial aims to provide the reader with a simplified, basic setup of an op
 
 Tools like Salt, Puppet and Chef allow you to issue commands on multiple machines at once; and also install and configure software. Salt has two main aspects: configuration management and remote execution; while cloud deployment is left to Salt Cloud.
 
-#### Salt Master & Salt Minion(s)
-
-The terms [master](http://docs.saltstack.com/topics/configuration.html#term-master) and [minion](http://docs.saltstack.com/topics/configuration.html#term-minion) refer to the controller and the controlled. The master is essentially the central coordinator for all of the minions &ndash; similar to a client/server configuration where the master is the server, and the minion is the client.
-
 ## Framework
 
 Salt Cloud is a public-cloud provisioning tool designed to automate the
-deployment of public-cloud servers. It integrates SaltStack with DigitalOcean's [application programming interface (API)](https://www.digitalocean.com/api/) in a clean way; and manages cloud-based servers via virtual machine [maps](https://salt-cloud.readthedocs.org/en/latest/topics/map.html) and [profiles](http://salt-cloud.readthedocs.org/en/latest/topics/profiles.html).
+deployment of public-cloud servers. It integrates Salt Stack with DigitalOcean's [application programming interface (API)](https://www.digitalocean.com/api/) in a clean way; and manages cloud-based servers via virtual machine [maps](https://salt-cloud.readthedocs.org/en/latest/topics/map.html) and [profiles](http://salt-cloud.readthedocs.org/en/latest/topics/profiles.html).
 
-DigitalOcean droplets (i.e. cloud servers or virtual private servers)  created with Salt Cloud have Salt automatically installed and are assigned to a specified *master*. As previously mentioned, the Salt master is the central server that all *minions* (i.e., client servers) connect to. Commands are executed on the minions through the master, and minions send data back to the master (unless otherwise redirected with a [returner](http://docs.saltstack.com/ref/returners/index.html)).
+#### Salt Master & Salt Minion(s)
+
+DigitalOcean droplets (i.e. cloud servers or virtual private servers)  created with Salt Cloud are called *minions*, have Salt automatically installed, and are assigned to a specified *master*. The terms [master](http://docs.saltstack.com/topics/configuration.html#term-master) and [minion](http://docs.saltstack.com/topics/configuration.html#term-minion) refer to the controller and the controlled. The master is essentially the central coordinator for all of the minions &ndash; similar to a client/server configuration where the master is the server, and the minion is the client. Commands are executed on the minions through the master, and minions send data back to the master (unless otherwise redirected with a [returner](http://docs.saltstack.com/ref/returners/index.html)).
 
 ## Benefits
 
 DigitalOcean droplets can be created individually or in large groups and
-can be provisioned and fully managed, without ever needing to be logged into. From deploying single virtual machines, to mapping and provisioning entire clouds, Salt Cloud is as scaleable as you need it to be.
+can be provisioned and fully managed, without ever needing to be logged into. From deploying single virtual machines, to mapping and provisioning entire clouds, Salt Cloud is as scalable as you need it to be.
 
 ## Prerequisites
 
@@ -36,7 +34,7 @@ First, consult [How To Install Salt on Ubuntu 12.04 | DigitalOcean](https://www.
 Any server accessible from the public Internet should be security hardened, and your Salt master is no exception:
 
 * Change your SSH port from the default Port 22 to a random port **below 1024**, as described in **Step Five** of [Initial Server Setup with Ubuntu 12.04](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04);
-* Configure a [firewall](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server) and make sure to open your **custom SSH port** and **TCP Ports 4505 & 4506**;
+* Configure a [firewall](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server) and make sure to open your **custom SSH port** and **TCP Ports 4505 & 4506**; and
 * Either [disable password logins](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps) or deploy [Fail2ban](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04) & [DenyHosts](https://www.digitalocean.com/community/articles/how-to-install-denyhosts-on-ubuntu-12-04).
 
 #### Create SSH Key Pair for DigitalOcean Control Panel
@@ -67,7 +65,7 @@ Verify that your Salt master's hostname and FQDN are properly set. *See* [Settin
 
 #### Acquire Installation Tools
 
-SaltStack is built with the Python programming language; so, we'll need <code>pip</code> (a package management system used to install and manage software packages written in Python). Despite being available via Python's repositories, we'll be downloading the Salt Cloud package from SaltStack's GitHub [repository](https://github.com/saltstack/salt-cloud/).
+Salt Stack is built with the Python programming language; so, we'll need <code>pip</code> (a package management system used to install and manage software packages written in Python). In addition, despite being available via Python's repositories, we'll be downloading the Salt Cloud package from Salt Stack's GitHub [repository](https://github.com/saltstack/salt-cloud/).
 
 To install <code>pip</code> and <code>git</code> on your system, execute:
 
@@ -99,7 +97,11 @@ Verify Salt Cloud was successfully installed, by executing:
 
 ## Configure Salt Cloud
 
-Salt Cloud runs on a module system similar to the main Salt project. The core configuration of Salt cloud is handled in the [cloud configuration file](https://salt-cloud.readthedocs.org/en/latest/topics/config.html). This file is comprised of global configurations for interfacing with various cloud providers.
+Salt Cloud runs on a module system similar to the main Salt project.
+
+### Core Configuration
+
+The core configuration of Salt cloud is handled in the [cloud configuration file](https://salt-cloud.readthedocs.org/en/latest/topics/config.html). This file is comprised of global configurations for interfacing with various cloud providers. The default minion configuration is also set up in this file. In other words, the `cloud` file is where the minions that are created derive their configuration.
 
 Create the cloud configuration file by executing (obviously, you can use whichever text editor you wish; but this guide assumes that you have installed the [vim text editor](https://www.digitalocean.com/community/articles/installing-and-using-the-vim-text-editor-on-a-cloud-server)):
 
@@ -110,8 +112,7 @@ Now, on your keyboard, tap on the <code>i</code> key and use the arrow keys to n
 	provider: do
 	# Set the location of the Salt master
 	minion:
-	    master: master.yourdomain.tld
-	    append_domain: yourdomain.tld
+	  master: master.yourdomain.tld
 
 To save & exit, tap the <code>Esc</code> key; then, the <code>:</code> key; followed by the <code>w</code> key; the <code>q</code> key; and, finally, <code>Enter</code>.
 
@@ -142,7 +143,7 @@ Tap on the <code>i</code> key and use the arrow keys on your keyboard to navigat
 
 ### DigitalOcean API
 
-Using Salt Cloud with DigitalOcean requires a <code>client_key</code> and an <code>api_key</code>. These can be found in the [DigitalOcean Control Panel](https://www.digitalocean.com/community/articles/the-digitalocean-control-panel), under the API Access tab.
+Using Salt Cloud with DigitalOcean requires a <code>client\_key</code> and an <code>api\_key</code>. These can be found in the [DigitalOcean Control Panel](https://www.digitalocean.com/community/articles/the-digitalocean-control-panel), under the API Access tab.
 
 Now, create an API key for your account by following the steps outlined in [How To Use the DigitalOcean API](https://www.digitalocean.com/community/articles/how-to-use-the-digitalocean-api). You will need to copy & paste both your DigitalOcean <code>Client ID</code> and <code>API Key</code> in the configuration file described, above.
 
@@ -196,28 +197,36 @@ Now, on your keyboard, tap on the <code>i</code> key and use the arrow keys to n
 	  script: [optional deployment script e.g. Ubuntu, Fedora, python-bootstrap, etc.]
 	  location: [from salt-cloud --list-locations do]
 
+The Salt Stack, by default, uses PyYAML syntax for its template files; but numerous other templating languages are available as well. Be sure to follow the proper formatting techniques for YAML, which involves two spaces instead of tabs. An [online YAML parser](http://yaml-online-parser.appspot.com) is available, when troubleshooting syntax issues with YAML files.
+
 ## Provision a New Cloud Server!
 
 To create a new cloud server, execute (replacing <code>hostname</code> with any hostname of your choice):
 
 	sudo salt-cloud --profile ubuntu_512MB_ny2 hostname
 
-If all goes well you should have a newly-provisioned server, bootstrapped with Salt minion (the new minion's SSH keys will automatically be added to the Salt master). If you would like to provision multiple virtual machines from the same profile, you can do so with a single command, e.g.
+If all goes well, you should have a newly-provisioned server, bootstrapped with Salt minion (the new minion's SSH keys will automatically be added to the Salt master). If you would like to provision multiple virtual machines from the same profile, you can do so with a single command, e.g.
 
-	sudo salt-cloud --profile ubuntu_1GB_ny2 hostname1 hostname2 hostname3
+	sudo salt-cloud -p ubuntu_1GB_ny2 hostname1 hostname2 hostname3
+
+(Note that <code>--profile</code> and <code>-p</code> are interchangable.)
 
 ## Minion Configuration
 
-To configure your new fleet, consult: [How To Create Your First Salt Formula | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-create-your-first-salt-formula).
+To configure your new fleet of cloud servers, consult: [How To Create Your First Salt Formula | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-create-your-first-salt-formula).
 
 ## Destroy a Minion
 
+There are various [options](https://salt-cloud.readthedocs.org/en/latest/ref/cli/salt-cloud.html#options) that can be passed when executing a Salt Cloud command. For example, to destroy a particular minion, simply execute:
+
+	sudo salt-cloud -d hostname
+
 ## Additional Resources
 
-* [Salt Cloud Documentation](https://salt-cloud.readthedocs.org/en/latest/index.html);
-* [Frequently Asked Questions | SaltStack](http://docs.saltstack.com/faq.html);
+* [Salt Cloud Documentation | Salt Stack](https://salt-cloud.readthedocs.org/en/latest/index.html);
+* [Frequently Asked Questions | Salt Stack](http://docs.saltstack.com/faq.html);
 * All DigitalOcean [Configuration Management](https://www.digitalocean.com/community/community_tags/configuration-management) articles.
 
 As always, if you need help with the steps outlined in this HowTo, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
-<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; DATE</div></p>
+<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; October 25, 2013</div></p>
