@@ -34,7 +34,14 @@ First, consult [How To Install Salt on Ubuntu 12.04 | DigitalOcean](https://www.
 Any server accessible from the public Internet should be security hardened, and your Salt master is no exception:
 
 * Change your SSH port from the default Port 22 to a random port **below 1024**, as described in **Step Five** of [Initial Server Setup with Ubuntu 12.04](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04);
-* Configure a [firewall](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server) and make sure to open your **custom SSH port** and **TCP Ports 4505 & 4506**; and
+
+The Salt master communicates with the minions using an AES-encrypted ZeroMQ connection. These communications are done over TCP ports 4505 and 4506, which need to be accessible on the master *only*. 
+
+* Configure a [firewall](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server) and make sure to open your **custom SSH port** and **TCP Ports 4505 & 4506**;
+ * The default firewall configuration tool for Ubuntu is `ufw`. To open the Salt ports, simply execute:
+
+			sudo ufw allow salt
+
 * Either [disable password logins](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps) or deploy [Fail2ban](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04) & [DenyHosts](https://www.digitalocean.com/community/articles/how-to-install-denyhosts-on-ubuntu-12-04).
 
 #### Create SSH Key Pair for DigitalOcean Control Panel
@@ -97,17 +104,17 @@ Verify Salt Cloud was successfully installed, by executing:
 
 ## Configure Salt Cloud
 
-Salt Cloud runs on a module system similar to the main Salt project.
+Salt Cloud runs on a module system similar to the main Salt project; and, by default, uses PyYAML syntax for its template files &ndash; but numerous other templating languages are available as well. When creating your configuration files, be sure to follow the proper formatting techniques for YAML, which involves two spaces instead of tabs.
 
 ### Core Configuration
 
-The core configuration of Salt cloud is handled in the [cloud configuration file](https://salt-cloud.readthedocs.org/en/latest/topics/config.html). This file is comprised of global configurations for interfacing with various cloud providers. The default minion configuration is also set up in this file. In other words, the `cloud` file is where the minions that are created derive their configuration.
+The core configuration of Salt Cloud is handled in the [cloud configuration file](https://salt-cloud.readthedocs.org/en/latest/topics/config.html). This file is comprised of global configurations for interfacing with various cloud providers. The default minion configuration is also set up in this file. In other words, the `cloud` file is where the minions that are created derive their configuration.
 
 Create the cloud configuration file by executing (obviously, you can use whichever text editor you wish; but this guide assumes that you have installed the [vim text editor](https://www.digitalocean.com/community/articles/installing-and-using-the-vim-text-editor-on-a-cloud-server)):
 
 	sudo vim /etc/salt/cloud
 
-Now, on your keyboard, tap on the <code>i</code> key and use the arrow keys to navigate the text area and create your `cloud` file so that it resembles the example, below (replacing <code>master.yourdomain.tld</code> with the FQDN of your Salt master):
+Now, on your keyboard, tap on the <code>i</code> key; use the arrow keys to navigate the text area; and create your `cloud` file so that it resembles the example, below (replacing <code>master.yourdomain.tld</code> with the FQDN of your Salt master):
 
 	provider: do
 	# Set the location of the Salt master
@@ -122,7 +129,7 @@ Next, create two new directories:
 
 	sudo mkdir /etc/salt/{cloud.profiles.d,cloud.providers.d}
 
-These new directories will hold the DigitalOcean YAML configuration files.
+These new directories will hold the DigitalOcean-specific YAML configuration files.
 
 ### DigitalOcean Cloud Configuration
 
@@ -197,7 +204,7 @@ Now, on your keyboard, tap on the <code>i</code> key and use the arrow keys to n
 	  script: [optional deployment script e.g. Ubuntu, Fedora, python-bootstrap, etc.]
 	  location: [from salt-cloud --list-locations do]
 
-The Salt Stack, by default, uses PyYAML syntax for its template files; but numerous other templating languages are available as well. Be sure to follow the proper formatting techniques for YAML, which involves two spaces instead of tabs. An [online YAML parser](http://yaml-online-parser.appspot.com) is available, when troubleshooting syntax issues with YAML files.
+An [online YAML parser](http://yaml-online-parser.appspot.com) is available, when troubleshooting syntax issues with YAML files.
 
 ## Provision a New Cloud Server!
 
@@ -223,10 +230,12 @@ There are various [options](https://salt-cloud.readthedocs.org/en/latest/ref/cli
 
 ## Additional Resources
 
-* [Salt Cloud Documentation | Salt Stack](https://salt-cloud.readthedocs.org/en/latest/index.html);
+* [Salt Cloud Documentation](https://salt-cloud.readthedocs.org/en/latest/index.html);
+* [Salt Starters](http://saltstarters.org/) (a place to find and share Salt-Stack-related code, such as state trees or custom modules);
+* [Salt Stack Formulas | GitHub](https://github.com/saltstack-formulas);
 * [Frequently Asked Questions | Salt Stack](http://docs.saltstack.com/faq.html);
 * All DigitalOcean [Configuration Management](https://www.digitalocean.com/community/community_tags/configuration-management) articles.
 
-As always, if you need help with the steps outlined in this HowTo, look to the DigitalOcean Community for assistance by posing your question(s), below.
+As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
 <p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; October 25, 2013</div></p>
