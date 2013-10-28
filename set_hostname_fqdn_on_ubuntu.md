@@ -1,5 +1,5 @@
-Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu Server 12.04 LTS
-=
+Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04
+====
 
 ### Introduction
 
