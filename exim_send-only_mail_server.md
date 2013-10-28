@@ -1,7 +1,7 @@
 # ~~~~~~~~~~ DRAFT ~~~~~~~~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted*
 
-Install a Send-only Mail Server on Ubuntu Server for Your Apps
+Install a Send-only Mail Server for Your Apps on Ubuntu 12.04
 ====
 
 ### Introduction
@@ -10,11 +10,11 @@ Due to the popularity of Gmail, Google Apps, Outlook.com, Yahoo! Mail & a myriad
 
 ## Exim Message Transfer Agent (MTA)
 
-Exim is a lightweight MTA developed at the University of Cambridge for use on Unix systems connected to the Internet. It is freely available under the terms of the [GNU General Public Licence](http://www.gnu.org/licenses/gpl.html). Today, Exim 4 is the default MTA on Debian GNU/Linux systems.
+Exim is a lightweight MTA developed at the University of Cambridge for use on Unix-based systems connected to the Internet. It is freely available under the terms of the [GNU General Public Licence](http://www.gnu.org/licenses/gpl.html). Today, Exim 4 is the default MTA on Debian Linux systems.
 
 ## Prerequisites
 
-This guide assumes that you have already set your droplet's hostname and Fully Qualified Domain Name (FQDN). 
+This guide assumes that you have already set your droplet's hostname and Fully Qualified Domain Name (FQDN). *See* [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md).
 
 ## Update Current Software
 
@@ -30,15 +30,85 @@ Then, to install Exim and its dependencies, execute:
 
 ## Configure Exim for Local Mail Service
 
-To start the Exim configuration execute:
+To start the Exim configuration, execute:
 
 	sudo dpkg-reconfigure exim4-config
 
-and configure everything according to your needs. The first configuration window will ask you to select the "mail server configuration type that best meets your needs." If not already highlighted, use the arrow keys to select `internet site; mail is sent and received directly using SMTP`.
+and configure everything according to your needs.
+
+#### Mail Server Configuration Type
+
+The first configuration window you encounter will ask you to select the `mail server configuration type that best meets your needs.` If not already highlighted, use the arrow keys on your keyboard to select `internet site; mail is sent and received directly using SMTP`:
 
 ![Select the option for internet site](./images/exim4_internet_site.png)
 
-Next, tap the `Tab` key (to highlight `<Ok>` and press `Enter`.
+Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
+
+#### Enter FQDN
+
+The next configuration window you'll encounter will ask that you enter your system's fully qualified domain name (FQDN) in the `mail name` configuration screen:
+
+![Enter your system's FQDN](./images/exim4_fqdn.png)
+
+Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
+
+#### SMTP Listener
+
+The ensuing configuration window will ask you to decide on which interfaces you would like `Exim` to "listen." Enter <code>127.0.0.1</code>, only:
+
+![Tell Exim to listen on 127.0.0.1, only](./images/exim4_listen.png)
+
+**Note:** DigitalOcean anticipates IPv6 support in the near future; at which time, you will want to instruct `Exim` to listen on both <code>127.0.0.1; ::1</code>.
+
+Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
+
+#### Mail Destinations
+
+The configuration prompt that follows will ask that you enter all of the destinations for which `Exim` should accept mail. List your FQDN, local hostname, and <code>localhost</code>:
+
+![Enter mail destinations](./images/exim4_destinations.png)
+
+Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
+
+#### Relay Options
+
+Advanced configurations beyond the scope of this article allow you to use `Exim` as a relay mail server. In the next screen, leave the `relay mail` field blank:
+
+![No need to configure relay domain(s) at this time](./images/exim4_relay.png)
+
+Tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
+
+The subsequent screen is a follow-up to the relay mail server option. Leave this window blank and tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
+
+#### DNS Queries
+
+Select **No** when asked whether to keep DNS queries to a minimum:
+
+![Select No when asked whether to keep DNS queries to a minimum](./images/exim4_dns_queries.png)
+
+Make sure that <code>&lt;No&gt;</code> is highlighted and press <code>Enter</code>.
+
+#### Delivery Method
+
+In the window that follows, choose whichever mail delivery method you'd like for incoming mail; although the <code>Maildir</code> format can make handling individual, locally-delivered mail messages easier:
+
+![Choose the Maildir delivery method](./images/exim4_mail_format.png)
+
+Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
+
+#### Configuration File
+
+In the ensuing prompt, choose the default `unsplit` configuration file, by selecting <code>No</code>:
+
+![Select unsplit config](./images/exim4_unsplit_config.png)
+
+Make sure that <code>&lt;No&gt;</code> is highlighted and press <code>Enter</code>.
+
+#### Postmaster address
+
+In the last configuration window, enter at least one external email address (choose one that you check frequently) in addition to root when asked to specify postmaster mail recipients.
+
+![Enter external email address](./images/exim4_external_address.png)
 
 ## Test Your Mail Configuration
 
