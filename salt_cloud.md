@@ -13,8 +13,7 @@ Tools like Salt, Puppet and Chef allow you to issue commands on multiple machine
 
 ## Framework
 
-Salt Cloud is a public-cloud provisioning tool designed to automate the
-deployment of public-cloud servers. It integrates Salt Stack with DigitalOcean's [application programming interface (API)](https://www.digitalocean.com/api/) in a clean way; and manages cloud-based servers via virtual machine [maps](https://salt-cloud.readthedocs.org/en/latest/topics/map.html) and [profiles](http://salt-cloud.readthedocs.org/en/latest/topics/profiles.html).
+Salt Cloud is a public-cloud provisioning tool designed to automate the deployment of public-cloud servers. It integrates Salt Stack with DigitalOcean's [application programming interface (API)](https://www.digitalocean.com/api/) in a clean way; and manages cloud-based servers via virtual machine [maps](https://salt-cloud.readthedocs.org/en/latest/topics/map.html) and [profiles](http://salt-cloud.readthedocs.org/en/latest/topics/profiles.html).
 
 #### Salt Master & Salt Minion(s)
 
@@ -22,8 +21,7 @@ DigitalOcean droplets (i.e. cloud servers or virtual private servers)  created w
 
 ## Benefits
 
-DigitalOcean droplets can be created individually or in large groups and
-can be provisioned and fully managed, without ever needing to be logged into. From deploying single virtual machines, to mapping and provisioning entire clouds, Salt Cloud is as scalable as you need it to be.
+DigitalOcean droplets can be created individually or in large groups and can be provisioned and fully managed, without ever needing to be logged into. From deploying single virtual machines, to mapping and provisioning entire clouds, Salt Cloud is as scalable as you need it to be.
 
 ## Prerequisites
 
@@ -40,13 +38,16 @@ The Salt master communicates with the minions using an AES-encrypted ZeroMQ conn
 * Configure a [firewall](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server) and make sure to open your **custom SSH port** and **TCP Ports 4505 & 4506**;
  * The default firewall configuration tool for Ubuntu is `ufw`. To open the Salt ports, simply execute:
 
+			sudo ufw allow [custom SSH port below 1024]/tcp
 			sudo ufw allow salt
+			sudo ufw enable
+			sudo ufw status verbose
 
 * Either [disable password logins](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps) or deploy [Fail2ban](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04) & [DenyHosts](https://www.digitalocean.com/community/articles/how-to-install-denyhosts-on-ubuntu-12-04).
 
 #### Create SSH Key Pair for DigitalOcean Control Panel
 
-Salt Cloud uses public key encryption to secure the communication between  the Salt master and DigitalOcean. Therefore, create a directory in which to store your SSH keys:
+Salt Cloud uses public key encryption to secure the communication between  the Salt master and DigitalOcean. Therefore, create a directory on your master in which to store your SSH keys:
 
 	sudo mkdir /keys
 
@@ -58,7 +59,7 @@ The system will respond with <code>Enter file in which to save the key (/root/.s
 
 	/keys/digital-ocean-salt-cloud
 
-and press <code>Enter</code>. The system will next display <code>Enter passphrase (empty for no passphrase):</code>, asking you to enter an *optional* password. **Do not** enter a passphrase; and, instead, tap the <code>Enter</code> key twice.
+and press <code>Enter</code>, on your keyboard. The system will next display <code>Enter passphrase (empty for no passphrase):</code>, asking you to enter an *optional* password. **Do not** enter a passphrase; and, instead, tap the <code>Enter</code> key twice.
 
 Your new public (SSH) key is now located in <code>/keys/digital-ocean-salt-cloud.pub</code>. Finally, execute:
 
@@ -68,15 +69,15 @@ and copy & paste the public key into your DigitalOcean Control Panel, as outline
 
 #### Hostname & Fully Qualified Domain Name (FQDN)
 
-Verify that your Salt master's hostname and FQDN are properly set. *See* [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu Server 12.04 LTS](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md#setting-the-hostname--fully-qualified-domain-name-fqdn-on-ubuntu-server-1204-lts).
+Verify that your Salt master's hostname and FQDN are properly set. *See* [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md#setting-the-hostname--fully-qualified-domain-name-fqdn-on-ubuntu-server-1204-lts).
 
 #### Acquire Installation Tools
 
-Salt Stack is built with the Python programming language; so, we'll need <code>pip</code> (a package management system used to install and manage software packages written in Python). In addition, despite being available via Python's repositories, we'll be downloading the Salt Cloud package from Salt Stack's GitHub [repository](https://github.com/saltstack/salt-cloud/).
+Salt Stack is built with the Python programming language; so, we'll need <code>pip</code> (a package management system used to install and manage software packages written in Python). In addition, despite being available via Python's repositories, we'll be downloading the Salt Cloud package from Salt Stack's [GitHub repository](https://github.com/saltstack/salt-cloud/).
 
 To install <code>pip</code> and <code>git</code> on your system, execute:
 
-	sudo apt-get -y install python-pip git-core
+	sudo apt-get -y install python-pip git
 
 ## Install Salt Cloud Dependencies
 
@@ -104,9 +105,9 @@ Verify Salt Cloud was successfully installed, by executing:
 
 ## Configure Salt Cloud
 
-Salt Cloud runs on a module system similar to the main Salt project; and, by default, uses PyYAML syntax for its template files &ndash; but numerous other templating languages are available as well. When creating your configuration files, be sure to follow the proper formatting techniques for YAML, which involves two spaces instead of tabs.
+Salt Cloud runs on a module system similar to the main Salt project; and, by default, uses PyYAML syntax for its template files &ndash; but numerous other templating languages are available as well. When creating your configuration files, be sure to follow the proper formatting techniques for YAML, which involves two spaces instead of tabs. An [online YAML parser](http://yaml-online-parser.appspot.com) is available, when troubleshooting syntax issues with YAML files.
 
-### Core Configuration
+### I. Core Configuration
 
 The core configuration of Salt Cloud is handled in the [cloud configuration file](https://salt-cloud.readthedocs.org/en/latest/topics/config.html). This file is comprised of global configurations for interfacing with various cloud providers. The default minion configuration is also set up in this file. In other words, the `cloud` file is where the minions that are created derive their configuration.
 
@@ -121,7 +122,9 @@ Now, on your keyboard, tap on the <code>i</code> key; use the arrow keys to navi
 	minion:
 	  master: master.yourdomain.tld
 
-To save & exit, tap the <code>Esc</code> key; then, the <code>:</code> key; followed by the <code>w</code> key; the <code>q</code> key; and, finally, <code>Enter</code>.
+To save & exit, tap the <code>Esc</code> key, on your keyboard, followed by these keystrokes: <code>:</code>, <code>w</code>, <code>q</code>, and, finally, <code>Enter</code>.
+
+Additional, [miscellaneous options](https://salt-cloud.readthedocs.org/en/latest/topics/misc.html) are available that can be passed in the core configuration file, if you wish.
 
 ### Cloud Provider Modules
 
@@ -131,13 +134,13 @@ Next, create two new directories:
 
 These new directories will hold the DigitalOcean-specific YAML configuration files.
 
-### DigitalOcean Cloud Configuration
+### II. DigitalOcean Cloud Provider Configuration
 
-Create the DigitalOcean provider configuration file by executing:
+The DigitalOcean cloud provider configuration is used to control access to your DigitalOcean account. Create the [DigitalOcean cloud provider configuration](https://salt-cloud.readthedocs.org/en/latest/topics/config.html#digital-ocean) file by executing:
 
 	sudo vim /etc/salt/cloud.providers.d/digital_ocean.conf
 
-Tap on the <code>i</code> key and use the arrow keys on your keyboard to navigate the text area and create your `digital_ocean.conf` file so that it resembles the example, below:
+Tap on the <code>i</code> key; use the arrow keys on your keyboard to navigate the text area; and create your `digital_ocean.conf` file so that it resembles the example, below:
 
 	do:
 	  provider: digital_ocean
@@ -145,16 +148,18 @@ Tap on the <code>i</code> key and use the arrow keys on your keyboard to navigat
 	  client_key: YourClientIDCopiedFromControlPanel
 	  api_key: YourAPIKeyCopiedFromControlPanel
 	  ssh_key_name: digital-ocean-salt-cloud.pub
-	  # Directory on your Salt master
+	  # Directory & file name on your Salt master
 	  ssh_key_file: /keys/digital-ocean-salt-cloud
 
-### DigitalOcean API
+To save & exit, tap the <code>Esc</code> key, on your keyboard, followed by these keystrokes: <code>:</code>, <code>w</code>, <code>q</code>, and, finally, <code>Enter</code>.
+
+#### DigitalOcean API
 
 Using Salt Cloud with DigitalOcean requires a <code>client\_key</code> and an <code>api\_key</code>. These can be found in the [DigitalOcean Control Panel](https://www.digitalocean.com/community/articles/the-digitalocean-control-panel), under the API Access tab.
 
 Now, create an API key for your account by following the steps outlined in [How To Use the DigitalOcean API](https://www.digitalocean.com/community/articles/how-to-use-the-digitalocean-api). You will need to copy & paste both your DigitalOcean <code>Client ID</code> and <code>API Key</code> in the configuration file described, above.
 
-### Interacting with the API
+#### Interacting with the API
 
 After you configure the DigitalOcean provider in <code>/etc/salt/cloud.providers.d/digital_ocean.conf</code>, you gain access to the following commands:
 
@@ -165,13 +170,13 @@ After you configure the DigitalOcean provider in <code>/etc/salt/cloud.providers
 
 The output from these commands are important because it provides the variables needed to build our virtual machine profiles.
 
-### DigitalOcean Cloud Profile
+### III. DigitalOcean Cloud Profile
 
-The DigitalOcean cloud profile is used to control access to the DigitalOcean VPS system. Create the DigitalOcean cloud [profiles](https://salt-cloud.readthedocs.org/en/latest/topics/profiles.html) for your server fleet, by executing:
+Create the DigitalOcean cloud [profiles](https://salt-cloud.readthedocs.org/en/latest/topics/profiles.html) for your server fleet, by executing:
 
 	sudo vim /etc/salt/cloud.profiles.d/digital_ocean.conf
 
-Now, on your keyboard, tap on the <code>i</code> key and use the arrow keys to navigate the text area and create your `digital_ocean.conf` file so that it resembles the example, below:
+Now, on your keyboard, tap on the <code>i</code> key; use the arrow keys to navigate the text area; and create your `digital_ocean.conf` file so that it resembles the example, below:
 
 	# Official distro images available for Arch, CentOS, Debian, Fedora, Ubuntu
 
@@ -179,32 +184,46 @@ Now, on your keyboard, tap on the <code>i</code> key and use the arrow keys to n
 	  provider: do
 	  image: Ubuntu 12.04 x64
 	  size: 512MB
-	  script: Ubuntu
+	#  script: Optional Deploy Script Argument
 	  location: New York 2
+	  private_networking: True
 
 	ubuntu_1GB_ny2:
 	  provider: do
 	  image: Ubuntu 12.04 x64
 	  size: 1GB
-	  script: Ubuntu
+	#  script: Optional Deploy Script Argument
 	  location: New York 2
+	  private_networking: True
 
 	ubuntu_2GB_ny2:
 	  provider: do
 	  image: Ubuntu 12.04 x64
 	  size: 2GB
-	  script: Ubuntu
+	#  script: Optional Deploy Script Argument
 	  location: New York 2
+	  private_networking: True
 
 	# Create additional profiles, if you wish
-	[profile_name_of_your_choosing]
-	  provider: do
-	  image: [from salt-cloud --list-images do]
-	  size: [from salt-cloud --list-sizes do]
-	  script: [optional deployment script e.g. Ubuntu, Fedora, python-bootstrap, etc.]
-	  location: [from salt-cloud --list-locations do]
+	#[profile_alias_of_your_choosing]
+	#  provider: do
+	#  image: [from salt-cloud --list-images do]
+	#  size: [from salt-cloud --list-sizes do]
+	#  script: [optional deployment script e.g. Ubuntu, Fedora, python-bootstrap, etc.]
+	#  location: [from salt-cloud --list-locations do]
+	#  private_networking: [True or False: currently only available in NY2 region]
 
-An [online YAML parser](http://yaml-online-parser.appspot.com) is available, when troubleshooting syntax issues with YAML files.
+To save & exit, tap the <code>Esc</code> key, on your keyboard, followed by these keystrokes: <code>:</code>, <code>w</code>, <code>q</code>, and, finally, <code>Enter</code>.
+
+In addition to the examples provided, Salt Cloud can accommodate [multiple configuration files](https://salt-cloud.readthedocs.org/en/latest/topics/profiles.html#multiple-configuration-files), which allows for more extensible configuration and plays nicely with various configuration management tools as well as version control systems.
+
+#### OS Support for Cloud VMs
+
+Salt Cloud works primarily by executing a [script](https://salt-cloud.readthedocs.org/en/latest/topics/deploy.html) on the newly-provisioned droplets as soon as they become available. By default, the script that is used is the [salt-bootstrap script](https://github.com/saltstack/salt-bootstrap), unless a different deploy script is declared in the cloud profile. The preferred method (as of Salt Cloud v0.8.9) is currently to use the default `salt-bootstrap` script. If the `salt-bootstrap` script does not meet your needs, you may pass [Deploy Script Arguments](https://salt-cloud.readthedocs.org/en/latest/topics/misc.html#deploy-script-arguments) or [write your own](https://salt-cloud.readthedocs.org/en/latest/topics/deploy.html).
+
+#### Advanced Topic
+
+A number of options exist when creating virtual machines that are beyond the scope of this article. After you feel comfortable with the foundational principles outlined in this tutorial, you may want to learn about creating a more complex setup with a [map file](https://salt-cloud.readthedocs.org/en/latest/topics/map.html). The map file allows for a number of virtual machines to be created and associated with specific profiles.
 
 ## Provision a New Cloud Server!
 
