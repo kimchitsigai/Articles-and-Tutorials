@@ -1,12 +1,9 @@
-# ~~~~~~~~~~ DRAFT ~~~~~~~~~~
-*[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted*
-
 Install a Send-only Mail Server for Your Apps on Ubuntu 12.04
 ====
 
 ### Introduction
 
-Due to the popularity of Gmail, Google Apps, Outlook.com, Yahoo! Mail & a myriad of other providers, many cloud-server users mistakenly fail to install a mail server, initially. However, humans are not the only ones that send email. If fact, many Linux server applications also need to send email.
+Due to the popularity of Gmail, Google Apps, Outlook.com, Yahoo! Mail & a myriad of other providers, many cloud-server users mistakenly fail to install a mail server, initially. However, humans are not the only ones that send electronic mail. If fact, many Linux server applications also need to send email.
 
 ## Message Transfer Agent (MTA)
 
@@ -52,17 +49,17 @@ Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and pr
 
 #### Enter FQDN
 
-The next configuration window you'll encounter will ask that you enter your system's fully qualified domain name (FQDN) in the `mail name` configuration screen:
+The next configuration window you'll encounter will ask that you enter your system's fully qualified domain name (FQDN) in the `mail name` configuration screen. Type (obviously, substituting <code>hostname</code>, <code>yourdomain</code> & <code>tld</code> with your own values):
 
-![Enter your system's FQDN](./images/exim4_fqdn.png)
+	hostname.yourdomain.tld
 
 Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
 #### SMTP Listener
 
-The ensuing configuration window will ask you to decide on which interfaces you would like `Exim` to "listen." Enter <code>127.0.0.1</code>, only:
+The ensuing configuration window will ask you to decide on which interfaces you would like `Exim` to "listen." Enter:
 
-![Tell Exim to listen on 127.0.0.1, only](./images/exim4_listen.png)
+	127.0.0.1
 
 **Note:** DigitalOcean anticipates IPv6 support in the near future; at which time, you may want to instruct `Exim` to listen on both <code>127.0.0.1; ::1</code>.
 
@@ -74,8 +71,8 @@ The configuration prompt that follows will ask that you enter all of the destina
 
 * FQDN;
 * local hostname;
-* <code>localhost.localdomain</code>; and
-* <code>localhost</code>:
+* <code>localhost.localdomain</code>;
+* <code>localhost</code>
 
 ![Enter mail destinations](./images/exim4_destinations.png)
 
@@ -83,9 +80,7 @@ Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and pr
 
 #### Relay Options
 
-Advanced configurations beyond the scope of this article allow you to use `Exim` as a relay mail server. In the next screen, leave the `relay mail` field blank:
-
-![No need to configure relay domain(s) at this time](./images/exim4_relay.png)
+Advanced configurations beyond the scope of this article allow you to use `Exim` as a relay mail server. In the next screen, leave the `relay mail` field blank.
 
 Tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
@@ -93,15 +88,13 @@ The subsequent screen is a follow-up to the relay mail server option. Leave this
 
 #### DNS Queries
 
-Select **No** when asked whether to keep DNS queries to a minimum:
-
-![Select No when asked whether to keep DNS queries to a minimum](./images/exim4_dns_queries.png)
+Select **No** when asked whether to keep DNS queries to a minimum.
 
 Make sure that <code>&lt;No&gt;</code> is highlighted and press <code>Enter</code>.
 
 #### Delivery Method
 
-In the window that follows, choose whichever mail delivery method you'd like for incoming mail; although the <code>Maildir</code> format can make handling individual, locally-delivered mail messages easier:
+In the window that follows, choose whichever mail delivery method you'd like for incoming mail; although the <code>Maildir format</code> can make handling individual, locally-delivered mail messages easier:
 
 ![Choose the Maildir delivery method](./images/exim4_mail_format.png)
 
@@ -109,38 +102,32 @@ Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and pr
 
 #### Configuration File
 
-In the ensuing prompt, choose the default `unsplit` configuration file, by selecting <code>No</code>:
-
-![Select unsplit config](./images/exim4_unsplit_config.png)
+In the ensuing prompt, choose the (default) `unsplit` configuration file, by selecting <code>No</code>.
 
 Make sure that <code>&lt;No&gt;</code> is highlighted and press <code>Enter</code>.
 
 #### Postmaster address
 
-In the last configuration window, enter at least one external email address (choose one that you check frequently) in addition to root when asked to specify postmaster mail recipients.
+In the last configuration window, you'll be asked to specify postmaster mail recipients, enter (substituting <code>you</code>, <code>yourdomain</code> & <code>tld</code> with your own values):
+
+	root you@yourdomain.tld
+
+**Note:** Make sure that, in addition to <code>root</code>, you enter at least one external email address (choose one that you check frequently).
 
 ## Test Your Mail Configuration
 
-At this juncture, let's send a test email, to make sure everything is configured correctly, by issuing the following command: (substituting `someone@somedomain.tld` for a valid, an external email address):
+At this juncture, let's send a test email, to make sure everything is configured correctly, by issuing the following command: (substituting `someone@somedomain.tld` for a valid, external email address):
 
-	echo "This is a test." | mail -s Testing someone@somedomain.told
+	echo "This is a test." | mail -s Testing someone@somedomain.tld
 
-(Check the recipient's SPAM folder, in the event that the SPF record is not configured correctly.)
-
-## SMTP Authentication
-
-While you now have a functioning send-only mail server, most users prefer taking advantage of the added security provided by `SMTP-AUTH` with `TLS` and `SASL`.
-
-The first step is to create a self-signed certificate for use with `TLS`. Enter the following command into a terminal prompt:
-
-	sudo /usr/share/doc/exim4-base/examples/exim-gencert
-
-The system will then begin the process of creating a self-signed SSL certificate for Exim. This certificate is sufficient to establish encrypted connections, but, to to secure *identification*, you need to obtain a verified certificate from an third-party Certificate Authority (CA). *See* []().
+**Note:** You may need check the recipient's SPAM folder, in the event that the `SPF record` is not configured correctly.
 
 ## Additional Resources
 
-* [Documentation for Exim](http://www.exim.org/docs.html)
+* [Exim Documentation](http://www.exim.org/docs.html)
 * [Exim Wiki](http://wiki.exim.org/)
+* [Exim4 | Ubuntu 12.04 Server Guide](https://help.ubuntu.com/12.04/serverguide/exim4.html)
 
-# ~~~~~~~~~~ DRAFT ~~~~~~~~~~
-*[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted* 
+As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
+
+<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; October 28, 2013</div></p>
