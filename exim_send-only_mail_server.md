@@ -8,13 +8,19 @@ Install a Send-only Mail Server for Your Apps on Ubuntu 12.04
 
 Due to the popularity of Gmail, Google Apps, Outlook.com, Yahoo! Mail & a myriad of other providers, many cloud-server users mistakenly fail to install a mail server, initially. However, humans are not the only ones that send email. If fact, many Linux server applications also need to send email.
 
-## Exim Message Transfer Agent (MTA)
+## Message Transfer Agent (MTA)
 
-Exim is a lightweight MTA developed at the University of Cambridge for use on Unix-based systems connected to the Internet. It is freely available under the terms of the [GNU General Public Licence](http://www.gnu.org/licenses/gpl.html). Today, Exim 4 is the default MTA on Debian Linux systems.
+A Message Transfer Agent, or Mail Transfer Agent, transfers electronic mail messages from one computer to another. An MTA implements both the client (sending) and server (receiving) portions of the Simple Mail Transfer Protocol (SMTP).
+
+Another popular MTA is [Postfix](https://www.digitalocean.com/community/articles/how-to-install-and-setup-postfix-on-ubuntu-12-04), but users that do not require a full-fledged mail server prefer the Exim send-only mail server because it is lightweight, compared to other MTAs. Thus, Exim is a good choice for WordPress installations.
 
 ## Prerequisites
 
-This guide assumes that you have already set your droplet's hostname and Fully Qualified Domain Name (FQDN). *See* [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md).
+This guide assumes that you have already:
+
+* Set your droplet's hostname and Fully Qualified Domain Name (FQDN). *See* [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md);
+* Created the necessary DNS records. *See* [How to Set Up a Host Name with DigitalOcean](https://www.digitalocean.com/community/articles/how-to-set-up-a-host-name-with-digitalocean); and
+* Created an SPF record. *See* [How To use an SPF Record to Prevent Spoofing & Improve E-mail Reliability](https://www.digitalocean.com/community/articles/how-to-use-an-spf-record-to-prevent-spoofing-improve-e-mail-reliability).
 
 ## Update Current Software
 
@@ -30,15 +36,15 @@ Then, to install Exim and its dependencies, execute:
 
 ## Configure Exim for Local Mail Service
 
-To start the Exim configuration, execute:
+To configure Exim for your environment, execute:
 
 	sudo dpkg-reconfigure exim4-config
 
-and configure everything according to your needs.
+and configure everything according to your needs. If you need to modify any of your settings, simply re-run the configuration wizard.
 
 #### Mail Server Configuration Type
 
-The first configuration window you encounter will ask you to select the `mail server configuration type that best meets your needs.` If not already highlighted, use the arrow keys on your keyboard to select `internet site; mail is sent and received directly using SMTP`:
+The first configuration window you encounter will ask you to select the "**mail server configuration type that best meets your needs**." If not already highlighted, use the arrow keys on your keyboard to select `internet site; mail is sent and received directly using SMTP`:
 
 ![Select the option for internet site](./images/exim4_internet_site.png)
 
@@ -58,13 +64,18 @@ The ensuing configuration window will ask you to decide on which interfaces you 
 
 ![Tell Exim to listen on 127.0.0.1, only](./images/exim4_listen.png)
 
-**Note:** DigitalOcean anticipates IPv6 support in the near future; at which time, you will want to instruct `Exim` to listen on both <code>127.0.0.1; ::1</code>.
+**Note:** DigitalOcean anticipates IPv6 support in the near future; at which time, you may want to instruct `Exim` to listen on both <code>127.0.0.1; ::1</code>.
 
 Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
 #### Mail Destinations
 
-The configuration prompt that follows will ask that you enter all of the destinations for which `Exim` should accept mail. List your FQDN, local hostname, and <code>localhost</code>:
+The configuration prompt that follows will ask that you enter all of the destinations for which `Exim` should accept mail. List your:
+
+* FQDN;
+* local hostname;
+* <code>localhost.localdomain</code>; and
+* <code>localhost</code>:
 
 ![Enter mail destinations](./images/exim4_destinations.png)
 
@@ -108,13 +119,23 @@ Make sure that <code>&lt;No&gt;</code> is highlighted and press <code>Enter</cod
 
 In the last configuration window, enter at least one external email address (choose one that you check frequently) in addition to root when asked to specify postmaster mail recipients.
 
-![Enter external email address](./images/exim4_external_address.png)
-
 ## Test Your Mail Configuration
 
-Issue the following command to send a test email, substituting an external email address for `someone@somedomain.tld`.
+At this juncture, let's send a test email, to make sure everything is configured correctly, by issuing the following command: (substituting `someone@somedomain.tld` for a valid, an external email address):
 
 	echo "This is a test." | mail -s Testing someone@somedomain.told
+
+(Check the recipient's SPAM folder, in the event that the SPF record is not configured correctly.)
+
+## SMTP Authentication
+
+While you now have a functioning send-only mail server, most users prefer taking advantage of the added security provided by `SMTP-AUTH` with `TLS` and `SASL`.
+
+The first step is to create a self-signed certificate for use with `TLS`. Enter the following command into a terminal prompt:
+
+	sudo /usr/share/doc/exim4-base/examples/exim-gencert
+
+The system will then begin the process of creating a self-signed SSL certificate for Exim. This certificate is sufficient to establish encrypted connections, but, to to secure *identification*, you need to obtain a verified certificate from an third-party Certificate Authority (CA). *See* []().
 
 ## Additional Resources
 
