@@ -118,7 +118,8 @@ Issue the following command to send a test email, substituting an external email
 
 ## Additional Resources
 
-*	[Documentation for Exim](http://www.exim.org/docs.html)
+* [Documentation for Exim](http://www.exim.org/docs.html)
+* [Exim Wiki](http://wiki.exim.org/)
 
 # ~~~~~~~~~~ DRAFT ~~~~~~~~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted* 
