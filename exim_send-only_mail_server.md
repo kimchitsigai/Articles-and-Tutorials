@@ -9,7 +9,7 @@ Due to the popularity of Gmail, Google Apps, Outlook.com, Yahoo! Mail & a myriad
 
 A Message Transfer Agent, or Mail Transfer Agent, transfers electronic mail messages from one computer to another. An MTA implements both the client (sending) and server (receiving) portions of the Simple Mail Transfer Protocol (SMTP).
 
-Another popular MTA is [Postfix](https://www.digitalocean.com/community/articles/how-to-install-and-setup-postfix-on-ubuntu-12-04), but users that do not require a full-fledged mail server prefer the Exim send-only mail server because it is lightweight, compared to other MTAs. Thus, Exim is a good choice for WordPress installations.
+Another popular MTA is [Postfix](https://www.digitalocean.com/community/articles/how-to-install-and-setup-postfix-on-ubuntu-12-04), but users that do not require a full-fledged mail server prefer the Exim send-only mail server because it is lightweight, compared to other MTAs. Thus, Exim is a good choice for WordPress installations or server-monitoring apps that need to send email notifications.
 
 ## Prerequisites
 
@@ -37,13 +37,13 @@ To configure Exim for your environment, execute:
 
 	sudo dpkg-reconfigure exim4-config
 
-and configure everything according to your needs. If you need to modify any of your settings, simply re-run the configuration wizard.
+and configure everything according to your needs. If you ever need to modify any of your settings, simply re-run the configuration wizard.
 
 #### Mail Server Configuration Type
 
 The first configuration window you encounter will ask you to select the "**mail server configuration type that best meets your needs**." If not already highlighted, use the arrow keys on your keyboard to select `internet site; mail is sent and received directly using SMTP`:
 
-![Select the option for internet site](./images/exim4_internet_site.png)
+![Select the option for internet site](http://i.imgur.com/1JzbWv6)
 
 Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
@@ -74,7 +74,7 @@ The configuration prompt that follows will ask that you enter all of the destina
 * <code>localhost.localdomain</code>;
 * <code>localhost</code>
 
-![Enter mail destinations](./images/exim4_destinations.png)
+![Enter mail destinations](http://i.imgur.com/9WIK36H)
 
 Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
@@ -84,7 +84,7 @@ Advanced configurations beyond the scope of this article allow you to use `Exim`
 
 Tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
-The subsequent screen is a follow-up to the relay mail server option. Leave this window blank and tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
+The subsequent screen is a follow-up to the relay-mail-server option. Leave this window blank and tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
 #### DNS Queries
 
@@ -96,7 +96,7 @@ Make sure that <code>&lt;No&gt;</code> is highlighted and press <code>Enter</cod
 
 In the window that follows, choose whichever mail delivery method you'd like for incoming mail; although the <code>Maildir format</code> can make handling individual, locally-delivered mail messages easier:
 
-![Choose the Maildir delivery method](./images/exim4_mail_format.png)
+![Choose the Maildir delivery method](http://i.imgur.com/bZnmvVX)
 
 Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
