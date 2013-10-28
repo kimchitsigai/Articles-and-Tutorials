@@ -205,7 +205,7 @@ Now, on your keyboard, tap on the <code>i</code> key; use the arrow keys to navi
 	  private_networking: True
 
 	# Create additional profiles, if you wish
-	#[profile_alias_of_your_choosing]
+	#[profile_alias_of_your_choosing]:
 	#  provider: do
 	#  image: [from salt-cloud --list-images do]
 	#  size: [from salt-cloud --list-sizes do]
