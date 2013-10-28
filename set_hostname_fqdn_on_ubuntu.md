@@ -53,7 +53,9 @@ A particular computer's hostname can be changed at any time. To set the initial 
 
 	sudo vim /etc/hostname
 
-Then, tap on the `i` key and use the arrow keys on your keyboard to navigate the text area. Next, enter the hostname of your choice. To save & exit, tap the `Esc` key; then, the `:` key; followed by the `w` key; the `q` key; and, finally, `Enter`.
+* Then, tap on the <code>i</code> key and use the arrow keys on your keyboard to navigate the text area;
+* Next, enter the hostname of your choice; and
+* To save & exit, tap the <code>Esc</code> key, on your keyboard, followed by these keystrokes: <code>:</code>, <code>w</code>, <code>q</code>, and, finally, <code>Enter</code>.
 
 >*If* it exists, edit the file `/etc/default/dhcpcd` and comment out the `SET_HOSTNAME` directive, by executing:
 >
@@ -77,13 +79,13 @@ In a terminal or shell, execute:
 
 	sudo vim /etc/hosts
 
-Then, tap on the `i` key and use the arrow keys on your keyboard to navigate the text area. Modify your `hosts` file so that it resembles the following (**obviously,** substituting the `hostname`, `yourdomain`, `tld`, and `YourIP` values with your own):
+Then, tap on the <code>i</code> key and use the arrow keys on your keyboard to navigate the text area. Modify your `hosts` file so that it resembles the following (**obviously,** substituting the `hostname`, `yourdomain`, `tld`, and `YourIP` values with your own):
 
 	127.0.0.1	localhost.localdomain	localhost
 	127.0.1.1	hostname.yourdomain.tld	hostname
 	YourIP		hostname.yourdomain.tld	hostname
 
-To save & exit, tap the `Esc` key; then, the `:` key; followed by the `w` key; the `q` key; and, finally, `Enter`.
+To save & exit, tap the <code>Esc</code> key, on your keyboard, followed by these keystrokes: <code>:</code>, <code>w</code>, <code>q</code>, and, finally, <code>Enter</code>.
 
 You can verify that the FQDN was properly set by, again, executing:
 
@@ -95,7 +97,7 @@ If you want your remote server to be reachable over the internet via its FQDN, t
 
 ## Additional Resources
 
-*	[Ubuntu Server 12.04 LTS Guide](https://help.ubuntu.com/12.04/serverguide/index.html)
-*	[Initial Server Setup with Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04)
+* [Ubuntu Server 12.04 LTS Guide](https://help.ubuntu.com/12.04/serverguide/index.html)
+* [Initial Server Setup with Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04)
 
 <p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; October 22, 2013</div></p>
