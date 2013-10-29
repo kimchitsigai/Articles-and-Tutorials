@@ -17,7 +17,7 @@ This guide assumes that you have already:
 
 * Set your droplet's hostname and Fully Qualified Domain Name (FQDN). *See* [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md);
 * Created the necessary DNS records. *See* [How to Set Up a Host Name with DigitalOcean](https://www.digitalocean.com/community/articles/how-to-set-up-a-host-name-with-digitalocean); and
-* Created an SPF record. *See* [How To use an SPF Record to Prevent Spoofing & Improve E-mail Reliability](https://www.digitalocean.com/community/articles/how-to-use-an-spf-record-to-prevent-spoofing-improve-e-mail-reliability).
+* Created an `SPF record`. *See* [How To use an SPF Record to Prevent Spoofing & Improve E-mail Reliability](https://www.digitalocean.com/community/articles/how-to-use-an-spf-record-to-prevent-spoofing-improve-e-mail-reliability).
 
 ## Update Current Software
 
@@ -43,7 +43,7 @@ and configure everything according to your needs. If you ever need to modify any
 
 The first configuration window you encounter will ask you to select the "**mail server configuration type that best meets your needs**." If not already highlighted, use the arrow keys on your keyboard to select `internet site; mail is sent and received directly using SMTP`:
 
-![Select the option for internet site](http://i.imgur.com/1JzbWv6)
+![Select the option for internet site](http://i.imgur.com/1JzbWv6.png)
 
 Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
@@ -74,7 +74,7 @@ The configuration prompt that follows will ask that you enter all of the destina
 * <code>localhost.localdomain</code>;
 * <code>localhost</code>
 
-![Enter mail destinations](http://i.imgur.com/9WIK36H)
+![Enter mail destinations](http://i.imgur.com/9WIK36H.png)
 
 Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
@@ -96,7 +96,7 @@ Make sure that <code>&lt;No&gt;</code> is highlighted and press <code>Enter</cod
 
 In the window that follows, choose whichever mail delivery method you'd like for incoming mail; although the <code>Maildir format</code> can make handling individual, locally-delivered mail messages easier:
 
-![Choose the Maildir delivery method](http://i.imgur.com/bZnmvVX)
+![Choose the Maildir delivery method](http://i.imgur.com/bZnmvVX.png)
 
 Next, tap the <code>Tab</code> key (to highlight <code>&lt;Ok&gt;</code>) and press <code>Enter</code>.
 
@@ -116,7 +116,7 @@ In the last configuration window, you'll be asked to specify postmaster mail rec
 
 ## Test Your Mail Configuration
 
-At this juncture, let's send a test email, to make sure everything is configured correctly, by issuing the following command: (substituting `someone@somedomain.tld` for a valid, external email address):
+Send a test email, to make sure everything is configured correctly, by issuing the following command: (substituting `someone@somedomain.tld` for a valid, external email address):
 
 	echo "This is a test." | mail -s Testing someone@somedomain.tld
 
