@@ -3,13 +3,11 @@ Automated Provisioning of DigitalOcean Cloud Servers with Salt Cloud on Ubuntu 1
 
 ### Introduction
 
-Salt Stack is an open-source cloud deployment, configuration management, remote execution & monitoring package. You may not have heard of [Salt Stack](http://saltstack.org), but you might be familiar with [Puppet](https://www.digitalocean.com/community/articles/how-to-install-puppet-on-a-digitalocean-vps) or [Chef](https://www.digitalocean.com/community/articles/how-to-install-chef-and-ruby-with-rvm-on-a-ubuntu-vps). Salt is a similar tool, but it is relatively lightweight as far as resources and requirements and a growing number of users consider it much easier to use.
-
-This tutorial aims to provide the reader with a simplified, basic setup of an operable Salt Cloud master server; which DigitalOcean users can employ to automate the process of creating 1, 2 or a fleet of cloud servers.
+This tutorial builds on [How To Install Salt on Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-install-salt-on-ubuntu-12-04) and aims to provide the reader with a simplified, basic setup of an operable Salt Cloud master server; which DigitalOcean users can employ to automate the process of creating 1, 2 or a fleet of cloud servers.
 
 ## Infrastructure Management
 
-Tools like Salt, Puppet and Chef allow you to issue commands on multiple machines at once; and also install and configure software. Salt has two main aspects: configuration management and remote execution; while cloud deployment is left to Salt Cloud.
+Salt Stack is an open-source cloud deployment, configuration management, remote execution & monitoring package. You may not have heard of [Salt](http://saltstack.org), but you might be familiar with [Puppet](https://www.digitalocean.com/community/articles/how-to-install-puppet-on-a-digitalocean-vps) or [Chef](https://www.digitalocean.com/community/articles/how-to-install-chef-and-ruby-with-rvm-on-a-ubuntu-vps). Salt is a similar tool, but it is relatively lightweight as far as resources and requirements and a growing number of users consider it *much* easier to use. Tools like Salt, Puppet and Chef allow you to issue commands on multiple machines at once; and also install and configure software. Salt has two main aspects: configuration management and remote execution; while cloud deployment is left to Salt Cloud.
 
 ## Framework
 
@@ -124,7 +122,7 @@ Now, on your keyboard, tap on the <code>i</code> key; use the arrow keys to navi
 
 To save & exit, tap the <code>Esc</code> key, on your keyboard, followed by these keystrokes: <code>:</code>, <code>w</code>, <code>q</code>, and, finally, <code>Enter</code>.
 
-Additional, [miscellaneous options](https://salt-cloud.readthedocs.org/en/latest/topics/misc.html) are available that can be passed in the core configuration file, if you wish.
+For further customization, additional [miscellaneous options](https://salt-cloud.readthedocs.org/en/latest/topics/misc.html), that can be passed in the core configuration file, are available.
 
 ### Cloud Provider Modules
 
