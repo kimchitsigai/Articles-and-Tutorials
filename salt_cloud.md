@@ -7,7 +7,9 @@ This tutorial builds on [How To Install Salt on Ubuntu 12.04 | DigitalOcean](htt
 
 ## Infrastructure Management
 
-Salt Stack is an open-source cloud deployment, configuration management, remote execution & monitoring package. You may not have heard of [Salt](http://saltstack.org), but you might be familiar with [Puppet](https://www.digitalocean.com/community/articles/how-to-install-puppet-on-a-digitalocean-vps) or [Chef](https://www.digitalocean.com/community/articles/how-to-install-chef-and-ruby-with-rvm-on-a-ubuntu-vps). Salt is a similar tool, but it is relatively lightweight as far as resources and requirements and a growing number of users consider it *much* easier to use. Tools like Salt, Puppet and Chef allow you to issue commands on multiple machines at once; and also install and configure software. Salt has two main aspects: configuration management and remote execution; while cloud deployment is left to Salt Cloud.
+Salt Stack is an open-source cloud deployment, configuration management, remote execution & monitoring package. You may not have heard of [Salt](http://saltstack.org), but you might be familiar with [Puppet](https://www.digitalocean.com/community/articles/how-to-install-puppet-on-a-digitalocean-vps) or [Chef](https://www.digitalocean.com/community/articles/how-to-install-chef-and-ruby-with-rvm-on-a-ubuntu-vps). Salt is a similar tool, but it is relatively lightweight as far as resources and requirements and a growing number of users consider it *much* easier to use. Tools like Salt, Puppet and Chef allow you to issue commands on multiple machines at once; and also install and configure software.
+
+Salt has two main aspects: configuration management and remote execution; while cloud deployment is left to Salt Cloud. DigitalOcean droplets can be created individually or in large groups and can be provisioned and fully managed, without ever needing to be logged into. From deploying single virtual machines, to mapping and provisioning entire clouds, Salt Cloud is as scalable as you need it to be.
 
 ## Framework
 
@@ -16,10 +18,6 @@ Salt Cloud is a public-cloud provisioning tool designed to automate the deployme
 #### Salt Master & Salt Minion(s)
 
 DigitalOcean droplets (i.e. cloud servers or virtual private servers)  created with Salt Cloud are called *minions*, have Salt automatically installed, and are assigned to a specified *master*. The terms [master](http://docs.saltstack.com/topics/configuration.html#term-master) and [minion](http://docs.saltstack.com/topics/configuration.html#term-minion) refer to the controller and the controlled. The master is essentially the central coordinator for all of the minions &ndash; similar to a client/server configuration where the master is the server, and the minion is the client. Commands are executed on the minions through the master, and minions send data back to the master (unless otherwise redirected with a [returner](http://docs.saltstack.com/ref/returners/index.html)).
-
-## Benefits
-
-DigitalOcean droplets can be created individually or in large groups and can be provisioned and fully managed, without ever needing to be logged into. From deploying single virtual machines, to mapping and provisioning entire clouds, Salt Cloud is as scalable as you need it to be.
 
 ## Prerequisites
 
