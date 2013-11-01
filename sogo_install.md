@@ -100,6 +100,11 @@ Next, create the SOGo database in PostgreSQL:
 
 	su - postgres
 	createuser --no-superuser --no-createdb --no-createrole --encrypted --pwprompt sogo
+
+The system will respond with the following: `Enter password for new role:`
+
+To which, enter `sogo`. The system will then ask you to `Enter it again:`. Do so and press the <code>Enter</code> key. Then, execute:
+
 	createdb -O sogo sogo
 	exit
 	echo "host sogo sogo 127.0.0.1/32 md5" >> /etc/postgresql/9.1/main/pg_hba.conf
