@@ -31,7 +31,7 @@ This article will guide you through the installation of all of these programs on
 
 ## Prerequisites
 
-First, consult [How To Install and Configure a Basic LDAP Server on an Ubuntu 12.04 VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-install-and-configure-a-basic-ldap-server-on-an-ubuntu-12-04-vps) and deploy an LDAP server.
+
 
 #### Security Hardening
 
@@ -52,6 +52,10 @@ Any server accessible from the public Internet should be security hardened, and 
 #### Hostname & FQDN
 
 Set your server's hostname and Fully Qualified Domain Name by implementing the steps in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md).
+
+#### Install LDAP Server
+
+First, consult [How To Install and Configure a Basic LDAP Server on an Ubuntu 12.04 VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-install-and-configure-a-basic-ldap-server-on-an-ubuntu-12-04-vps) and deploy an LDAP server.
 
 #### Login to `root`
 
