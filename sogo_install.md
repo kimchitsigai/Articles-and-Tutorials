@@ -31,8 +31,6 @@ This article will guide you through the installation of all of these programs on
 
 ## Prerequisites
 
-
-
 #### Security Hardening
 
 Any server accessible from the public Internet should be security hardened, and your groupware server is no exception:
@@ -53,10 +51,6 @@ Any server accessible from the public Internet should be security hardened, and 
 
 Set your server's hostname and Fully Qualified Domain Name by implementing the steps in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md).
 
-#### Install LDAP Server
-
-First, consult [How To Install and Configure a Basic LDAP Server on an Ubuntu 12.04 VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-install-and-configure-a-basic-ldap-server-on-an-ubuntu-12-04-vps) and deploy an LDAP server.
-
 #### Login to `root`
 
 You will be executing all of the commands that follow as the `root` user. You can switch from a local user to the `root` user by executing:
@@ -69,7 +63,15 @@ You can change your server's timezone to whatever you want; altough it may be be
 
     dpkg-reconfigure tzdata
 
-#### Add SOGo Repository & GPG Public Key
+### Install LDAP Server
+
+The OpenLDAP server is in Ubuntu's default repositories under the package "slapd", so we can install it easily with apt-get. We will also install some additional utilities:
+
+	apt-get -y install slapd ldap-utils
+
+You will be asked to enter and confirm an administrator password for the administrator LDAP account.
+
+### Add SOGo Repository & GPG Public Key
 
 Append the SOGo repository to your `apt source list`, by copying & pasting both lines, below, into the command line and pressing `Enter`:
 
@@ -115,14 +117,17 @@ Finally, restart PostgreSQL:
 
 ## Configure SOGo
 
-Next, configure sogo by entering each of the following commands individually:
+Next, modify the SOGo configuration file to reflect the database settings, by entering each of the following commands individually:
 
 	su - sogo -s /bin/bash
+	defaults write sogod SOGoProfileURL "postgresql://sogo:sogo@localhost:5432/sogo/sogo_user_profile"
+	defaults write sogod OCSFolderInfoURL "postgresql://sogo:sogo@localhost:5432/sogo/sogo_folder_info"
+	defaults write sogod OCSSessionsFolderURL "postgresql://sogo:sogo@localhost:5432/sogo/sogo_sessions_folder"
+	defaults write sogod OCSEMailAlarmsFolderURL "postgresql://sogo:sogo@localhost:5432/sogo/sogo_alarm_folder"
+
+
+
 	defaults write sogod SOGoTimeZone "America/Chicago"
-	defaults write sogod OCSFolderInfoURL "postgresql://sogo:PostgreSQL_pwd@localhost:5432/sogo/sogo_folder_info"
-	defaults write sogod SOGoProfileURL "postgresql://sogo:PostgreSQL_pwd@localhost:5432/sogo/sogo_user_profile"
-	defaults write sogod OCSSessionsFolderURL "postgresql://sogo:PostgreSQL_pwd@localhost:5432/sogo/sogo_sessions_folder"
-	defaults write sogod OCSEMailAlarmsFolderURL "postgresql://sogo:PostgreSQL_pwd@localhost:5432/sogo/sogo_alarm_folder"
 	defaults write sogod SOGoUserSources '({CNFieldName = displayName;  IDFieldName = cn; UIDFieldName = sAMAccountName; IMAPHostFieldName =; baseDN = "cn=Users,dc=yourdomain,dc=tld"; bindDN = "cn=Administrator,cn=Users,dc=youdomain,dc=tld"; bindPassword = SambaPWD; canAuthenticate = YES; displayName = "Shared Addresses"; hostname = "localhost"; id = public; isAddressBook = YES; port = 389;})'
 	defaults write sogod WONoDetach YES
 	defaults write sogod WOLogFile -
