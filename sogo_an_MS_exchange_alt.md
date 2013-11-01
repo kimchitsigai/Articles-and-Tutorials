@@ -1,6 +1,6 @@
 # ~~~~~~~~~~ DRAFT ~~~~~~~~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted* 
-How To Install & Configure SOGo - an Open-Source Alternative to Microsoft Exchange - on Ubuntu Server
+Install & Configure SOGo &ndash; an Open-Source Alternative to Microsoft Exchange &ndash; on Ubuntu 12.04
 =====
 
 ### Introduction
@@ -17,76 +17,29 @@ Thunderbird and Lightning
 
 SOGo is standard-compliant. It supports CalDAV, CardDAV, GroupDAV, iMIP and iTIP and reuses existing IMAP, SMTP and database servers &ndash; making the solution easy to deploy and interoperable with many applications. Mobile devices supporting the SyncML standard use the Funambol middleware to synchronize information.
 
-## Prerequisites
+## Requirements
 
 SOGo reuses many components in an infrastructure. Thus, it requires the following:
 
-* Database server (e.g. [MySQL](https://www.digitalocean.com/community/community_tags/mysql) or [PostgreSQL](https://www.digitalocean.com/community/community_tags/postgresql));
-* LDAP server (e.g. [OpenLDAP](https://www.digitalocean.com/community/articles/how-to-install-and-configure-a-basic-ldap-server-on-an-ubuntu-12-04-vps));
-* SMTP server (e.g. [Postfix](https://www.digitalocean.com/community/articles/how-to-install-and-setup-postfix-on-ubuntu-12-04));
-* IMAP server (e.g. Dovecot).
+* Active Directory/Domain Controller Server (e.g. Samba)
+* Messaging Application Programming Interface (MAPI) (e.g. OpenChange)
+* Database server (e.g. PostgreSQL or MySQL);
+* LDAP server (e.g. OpenLDAP);
+* SMTP server (e.g. Postfix);
+* IMAP server (e.g. Cyrus or Dovecot).
 
 ## Assumptions
 
-This guide  assumes that:
+This guide  assumes:
 
 * All of the components listed above are running on the same server (i.e. `localhost` or `127.0.0.1`); and
-* That SOGo will be installed on the same server.
-* You will be executing all of the commands that follow as the `root` user. You can switch from a local user to the `root` user by executing:
+* That SOGo will be installed on the same server;
+* That you have implemented the steps in [Setting the Hostname & Fully Qualified Domain Name (FQDN)](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md);
+* That you will be executing all of the commands that follow as the `root` user. You can switch from a local user to the `root` user (to switch to the `root` user, execute):
 
 		sudo su
 
-* You have previously installed the `vim` text editor:
-
-		apt-get -y install vim
-
-	Within `vim`, the keystrokes you'll use the most are:
-
-	* `i` (insert)
-	* `Esc` (Escape key)
-	* `:` (colon)
-	* `w` (write)
-	* `q` (quit)
-	* The arrow keys (to manipulate the cursor)
-	* Finally, the `Backspace` & `Delete` keys 
-
 ## Preparatory Steps
-
-First, check that your hostname and Fully Qualified Domain Name (FQDN) are properly set, by executing (which should yield a result such as `mail` (or any hostname of your choice):
-
-	hostname
-
-Then, execute:
-
-	hostname -f
-
-Which should yield a result such as `mail.yourdomain.tld`.
-
-#### Edit Hostname
-
-A server's hostname can be edited by executing:
-
-	vim /etc/hostname
-
-Then, tapping on the `i` key; followed by typing the hostname of your choice. To save & exit, tap the `Esc` key; then `:`; followed by `w`; `q` and `Enter`.
-
-#### Edit FQDN
-
-To edit a server's FQDN, execute:
-
-	vim /etc/hosts
-
-Then, tap on the `i` key and modify your hosts file so that it resembles the following (**obviously,** substituting the [hostname], [yourdomain], [tld], and [YourIP] values):
-
-	127.0.0.1	localhost.localdomain	localhost
-	127.0.1.1	hostname.yourdomain.tld	hostname
-	YourIP		hostname.yourdomain.tld	hostname
-
-#### Reload Hostname and/or FQDN
-
-The following step is only necessary if you edited either the server's (i) hostname or (ii) FQDN:
-
-	service hostname restart
 
 ### Add SOGo Repository & GPG Public Key
 
@@ -121,7 +74,7 @@ Next, execute:
 
 	mount / remount
 
-Given that some useful files are missing from the Samba4 package found in the repository, we'll recompile it by executing the following commands, one-by-one:
+Given that some useful files are missing from the Samba4 package found in the repository, we'll recompile it by executing the following commands (one-by-one):
 
 	mkdir ~/Samba4
 	cd ~/Samba4
