@@ -51,25 +51,74 @@ Any server accessible from the public Internet should be security hardened, and 
 
 Set your server's hostname and Fully Qualified Domain Name by implementing the steps in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md).
 
-#### Login to `root`
-
-You will be executing all of the commands that follow as the `root` user. You can switch from a local user to the `root` user by executing:
-
-    sudo su
-
 #### Timezone
 
 You can change your server's timezone to whatever you want; altough it may be best to set it to the same timezone of most of your users.
 
-    dpkg-reconfigure tzdata
+    sudo dpkg-reconfigure tzdata
 
-### Install LDAP Server
+## Install LDAP Server
 
 The OpenLDAP server is in Ubuntu's default repositories under the package "slapd", so we can install it easily with apt-get. We will also install some additional utilities:
 
-	apt-get -y install slapd ldap-utils
+	sudo apt-get -y install slapd ldap-utils
 
 You will be asked to enter and confirm an administrator password for the administrator LDAP account.
+
+### Configure LDAP for SOGo Integration
+
+#### Provision the Frontend
+
+Execute (obviously, you can use whichever text editor you wish; but this guide assumes that you have installed the [vim text editor](https://www.digitalocean.com/community/articles/installing-and-using-the-vim-text-editor-on-a-cloud-server)):
+
+	sudo vim frontend.yourdomain.tld.ldif
+
+Now, on your keyboard, tap on the <code>i</code> key; use the arrow keys to navigate the text area; and copy &amp; paste, or create your frontend file so that it resembles, the example below (replacing <code>yourdomain.tld</code> with the FQDN of your groupware server):
+
+	dn: ou=Users,dc=yourdomain,dc=tld
+	objectClass: organizationalUnit
+	ou: Users
+	
+	dn: ou=Groups,dc=yourdomain,dc=tld
+	objectClass: organizationalUnit
+	ou: Groups
+
+Now we add the LDIF and provision the server by executing the following command:
+
+	sudo ldapadd -x -D cn=admin,dc=yourdomain,dc=tld -W -f frontend.yourdomain.tld.ldif
+
+The system will respond with `Enter LDAP Password:`. Enter your root LDAP password (the one you set during `slapd` installation).
+
+If provisioned correctly, the system will display:
+
+	adding new entry "ou=Users,dc=yourdomain,dc=tld"
+
+	adding new entry "ou=Groups,dc=yourdomain,dc=tld"
+
+#### Create the SOGo Administrative Account
+
+First, create the SOGo administrative account in your LDAP server. The following LDIF file (sogo.ldif) can be used as an example:
+
+	dn: uid=sogo,ou=Users,dc=yourdomain,dc=tld
+	objectClass: top
+	objectClass: inetOrgPerson
+	objectClass: person
+	objectClass: organizationalPerson
+	uid: sogo
+	cn: SOGo Administrator
+	mail: sogo@yourdomain.tld
+	sn: Administrator
+	givenName: SOGo
+
+Load the LDIF file inside your LDAP server using the following command:
+
+	sudo ldapadd -f sogo.ldif -x -w qwerty -D cn=admin,dc=yourdomain,dc=tld
+
+If successful, the system will respond with `adding new entry "uid=sogo,ou=Users,dc=yourdomain,dc=tld"`.
+
+Next, execute (replacing `LDAPpassword`):
+
+	sudo ldappasswd -h localhost -x -w LDAPpassword -D cn=admin,dc=yourdomain,dc=tld uid=sogo,ou=Users,dc=yourdomain,dc=tld -s LDAPpassword 
 
 ### Add SOGo Repository & GPG Public Key
 
@@ -80,23 +129,23 @@ Append the SOGo repository to your `apt source list`, by copying & pasting both 
 
 Next, you must add SOGo's GPG public key to Ubuntu's `apt keyring`. To do so, execute the following commands:
 
-	apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
+	sudo apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
 
 Then, update your lists of available software packages, by executing:
 
-	apt-get update
+	sudo apt-get update
 
 ## SOGo Installation
 
 Install SOGo by executing:
 
-    apt-get -y install sogo
+	sudo apt-get -y install sogo
 
 ## Install PostgreSQL Database
 
 Next, execute:
 
-	apt-get -y install postgresql sope4.9-gdl1-postgresql
+	sudo apt-get -y install postgresql sope4.9-gdl1-postgresql
 
 Next, create the SOGo database in PostgreSQL:
 
@@ -113,7 +162,7 @@ To which, enter `sogo`. The system will then ask you to `Enter it again:`. Do so
 
 Finally, restart PostgreSQL:
 
-	service postgresql restart
+	sudo service postgresql restart
 
 ## Configure SOGo
 
@@ -125,13 +174,9 @@ Next, modify the SOGo configuration file to reflect the database settings, by en
 	defaults write sogod OCSSessionsFolderURL "postgresql://sogo:sogo@localhost:5432/sogo/sogo_sessions_folder"
 	defaults write sogod OCSEMailAlarmsFolderURL "postgresql://sogo:sogo@localhost:5432/sogo/sogo_alarm_folder"
 
-
+While still logged in as the `sogo` user, we'll continue configuring SOGo:
 
 	defaults write sogod SOGoTimeZone "America/Chicago"
-	defaults write sogod SOGoUserSources '({CNFieldName = displayName;  IDFieldName = cn; UIDFieldName = sAMAccountName; IMAPHostFieldName =; baseDN = "cn=Users,dc=yourdomain,dc=tld"; bindDN = "cn=Administrator,cn=Users,dc=youdomain,dc=tld"; bindPassword = SambaPWD; canAuthenticate = YES; displayName = "Shared Addresses"; hostname = "localhost"; id = public; isAddressBook = YES; port = 389;})'
-	defaults write sogod WONoDetach YES
-	defaults write sogod WOLogFile -
-	defaults write sogod WOPidFile /tmp/sogo.pid
 	defaults write sogod SOGoDraftsFolderName "Drafts"
 	defaults write sogod SOGoSentFolderName "Sent"
 	defaults write sogod SOGoTrashFolderName "Trash"
@@ -149,13 +194,37 @@ Logout of the `sogo` user & return to the `root` user
 
 	exit
 
-Create a symbolic link to allow Samba4 to use the SOGo configuration file:
+## SOGo Web UI Setup
 
-	ln -s ~sogo/GNUstep ~root/GNUstep
+	sudo apt-get -y install apache2
+
+### Apache Configuration
+
+You have now to configure Apache2 by executing:
+
+	sudo vim /etc/apache2/conf.d/SOGo.conf
+
+Next, add a hash to the following lines:
+
+	# RequestHeader set "x-webobjects-server-port" "443"
+	# RequestHeader set "x-webobjects-server-name" "yourhostname"
+	# RequestHeader set "x-webobjects-server-url" "https://yourhostname"
+
+Enable the necessary modules for Apache2:
+
+	sudo a2enmod proxy
+	sudo a2enmod proxy_http
+	sudo a2enmod headers
+	sudo a2enmod rewrite
+	sudo a2dismod reqtimeout
+
+Restart Apache2
+
+	sudo service apache2 restart
 
 There is a small bug in the `init.d` of Sogo that holds up the start-up process. You must edit the `init` file:
 
-	vim /etc/init.d/sogo
+	sudo vim /etc/init.d/sogo
 
 and add the `-b` argument at lines 70 and 88:
 
@@ -164,59 +233,35 @@ and add the `-b` argument at lines 70 and 88:
 	# Line 88
 	start-stop-daemon -b -c $USER --quiet --start --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
 
-#### Restart SOGo & Samba4:
+#### Restart SOGo:
 
-	service samba4 restart && nohup /etc/init.d/sogo restart &
+	sudo service sogo restart	
 
-## Cyrus IMAP Installation
+## Postfix Installation
 
-The installation of Cyrus-Imap is done with the following command:
+Install Postfix
 
-	apt-get -y install cyrus-admin-2.4 cyrus-imapd-2.4 sasl2-bin
+	sudo apt-get -y install postfix postfix-ldap
 
-#### Configure saslauth Authentication
+Let as usual the default options, then give the following parameter to Postfix to use maildir format.
 
-Cyrus needs to use Saslauth system in order to authenticate its users. All small setup of Sasl in order to use Samba4.
+	postconf -e "home_mailbox=.Maildir/"
 
-	vim /etc/default/saslauthd
+Next, execute:
 
-and change the following lines:
+	postconf -e "mailbox_transport = lmtp:unix:/var/run/cyrus/socket/lmtp"
 
-	...
-	START=yes
-	...
-	MECHANISMS="ldap"
+It’s also necessary to indicate to Postfix do not use ltmp in a chroot mode as it will not able to communicate with Cyrus-Imap.
 
-Create the following file with the command
+	sudo vim /etc/postfix/master.cf
 
-	vim /etc/saslauthd.conf
+And change the line to add the “n” letter in the right placement like the following line.
 
-and paste the following content and by changing of course the Administrator password:
+	lmtp      unix  -       -       n       -       -       lmtp
 
-	ldap_servers: ldapi://%2Fvar%2Flib%2Fsamba%2Fprivate%2Fldapi
-	ldap_search_base: dc=yourdomain,dc=tld
-	ldap_filter: (cn=%u)
-	ldap_version: 3
-	ldap_auth_method: bind
-	ldap_bind_dn: Administrator@yourdomain.tld
-	ldap_bind_pw: pass1234
-	ldap_scope: sub
+Then restart Postfix
 
-Restart the service:
-
-	service saslauthd restart
-
-You can also check that you authentication works:
-
-	testsaslauthd -u administrator -p pass1234
-
-#### Cyrus Configuration
-
-	vim /etc/cyrus.conf
-
-Add the following line in SERVICES section:
-
-	imapnoauth      cmd="imapd -U 30 -N" listen="127.0.0.1:144" prefork=0 maxchild=100
+	sudo service postfix restart
 
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
