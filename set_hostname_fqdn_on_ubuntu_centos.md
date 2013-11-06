@@ -1,4 +1,4 @@
-Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04
+Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04 or CentOS 6.4
 ====
 
 ### Introduction
@@ -51,7 +51,13 @@ So long as the above parameters are complied with, one can use just about any na
 
 A particular computer's hostname can be changed at any time. To set the initial hostname or subsequently change it, execute the following commands in a terminal or shell session (obviously, you can use whichever text editor you wish; but this guide assumes that you have installed the [vim text editor](https://www.digitalocean.com/community/articles/installing-and-using-the-vim-text-editor-on-a-cloud-server)):
 
+#### Ubuntu 12.04
+
 	sudo vim /etc/hostname
+
+#### CentOS 6.4
+
+	sudo vim /etc/sysconfig/network
 
 * Then, tap on the <code>i</code> key and use the arrow keys on your keyboard to navigate the text area;
 * Next, enter the hostname of your choice; and
