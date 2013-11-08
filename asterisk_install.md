@@ -20,10 +20,6 @@ Asterisk is an open-source software implementation of a telephone PBX. Like any 
 
 The Asterisk software includes many features available in proprietary PBX systems: voice mail, conference calling, interactive voice response (phone menus), and automatic call distribution. In addition, users can create new functionality by writing dial-plan scripts in several of Asterisk's own extensions languages or by adding custom, loadable modules.
 
-## Internationalization
-
-Asterisk has become a popular IP-PBX worldwide due to its quality and flexibility. The American-English, French, Persian (i.e. Farsi) and Mexican-Spanish female voices for the Interactive voice response and voice-mail features of Asterisk are frequently updated. Many other languages and dialects are also available. Additionally, different voice sets are offered for commercial sale in different languages, dialects and genders.
-
 ## Preparatory Steps
 
 First, you must make a few structural decisions, before you deploy your cloud PBX.
@@ -121,7 +117,7 @@ The main FreePBX screen will offer you four options:
 
 Any server accessible from the public Internet should be security hardened, and an Asterisk IP-PBX is no exception. Security best practices are not within the scope of this article. However, at a minimum, you should review and deploy the following security measures:
 
-* [How To Protect SSH with fail2ban on CentOS 6](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-centos-6);
+* Fail2Ban was automatically installed, but still needs to be configured from the System Administration module; or, in the alternative, commence at **Step Two** of [How To Protect SSH with fail2ban on CentOS 6](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-centos-6);
 * [How To Install DenyHosts on CentOS 6](https://www.digitalocean.com/community/articles/how-to-install-denyhosts-on-centos-6); and
 * [How To Setup a Basic IP Tables Configuration on Centos 6](https://www.digitalocean.com/community/articles/how-to-setup-a-basic-ip-tables-configuration-on-centos-6), and open the following ports, for the initial setup and testing phase:
 	*	1720 (TCP)
