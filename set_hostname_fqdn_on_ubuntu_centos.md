@@ -103,7 +103,9 @@ If you want your remote server to be reachable over the internet via its FQDN, t
 
 ## Additional Resources
 
-* [Ubuntu Server 12.04 LTS Guide](https://help.ubuntu.com/12.04/serverguide/index.html)
 * [Initial Server Setup with Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04)
+* [Ubuntu Server 12.04 LTS Guide](https://help.ubuntu.com/12.04/serverguide/index.html)
+* [Initial Server Setup with CentOS 6](https://www.digitalocean.com/community/articles/initial-server-setup-with-centos-6)
+* [CentOS Wiki](http://wiki.centos.org/)
 
-<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; October 22, 2013</div></p>
+<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; Updated November 12, 2013</div></p>
