@@ -1,51 +1,69 @@
 # ~~~~~~~~~~ DRAFT ~~~~~~~~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted*
 
-Deploy a VoIP Private Branch Exchange (PBX) on CentOS 6.4
+Deploy a VoIP Private Branch Exchange (PBX) Server on CentOS 6.4
 ====
 
 ### Introduction
 
 Since the introduction of the private branch exchange (PBX) in the 1970s, companies have become dependent on the many features that were introduced over time. Today, businesses have a variety of options when it comes to telephone systems. Many are choosing the cloud with a hosted PBX solution in order to reduce capital expenses, maintenance & upgrade costs &ndash; while still reaping the benefits of the latest PBX features.
 
+This article aims to provide a guide through the planning and deployment of a [FreePBX](http://www.freepbx.org/) and [Asterisk](http://www.asterisk.org/) VoIP server and assumes you will be starting from a base install of `CentOS 6.4`.
+
 ## What is a PBX?
 
 A PBX is a system that connects internal telephone extensions to outside public & mobile telephone networks. An IP (Internet Protocol) PBX is a PBX that provides audio, video, and instant messaging communication through data networks connected with the Public Switched Telephone Network (PSTN) for worldwide telephony communication.
 
-In addition to the traditional PSTN (i.e. copper wire), modern PBX systems also utilize the Voice over Internet Protocol (VoIP). VoIP gateways enable businesses to use their managed intranets to help reduce long-distance expenses; and enjoy the benefits of a single network for voice and data communication.
+In addition to the traditional PSTN (i.e. landline), modern PBX systems also utilize the Voice over Internet Protocol (VoIP). VoIP gateways enable businesses to use their managed intranets to help reduce long-distance expenses; and enjoy the benefits of a single network for voice and data communication.
 
-## Asterisk IP-PBX
+## Asterisk IP PBX
 
-Asterisk is an open-source software implementation of a telephone PBX. Like any PBX, it allows connected telephones to make calls to one another, and to connect to other telephone services, such as traditional landlines (i.e. PSTN) and VoIP services.
+Asterisk is an open source software implementation of a telephone PBX. Like any PBX, it allows connected telephones to make calls to one another, and to connect to other telephone services, such as traditional landlines (i.e. PSTN) and VoIP networks.
 
-The Asterisk software includes many features available in proprietary PBX systems: voice mail, conference calling, interactive voice response (phone menus), and automatic call distribution. In addition, users can create new functionality by writing dial-plan scripts in several of Asterisk's own extensions languages or by adding custom, loadable modules.
+The Asterisk software includes many features available in proprietary PBX systems:
+
+* voice mail
+* conference calling
+* interactive voice response (phone menus)
+* automatic call distribution
+* and much, much more
+
+In addition, users can create new functionality by writing dial-plan scripts in several of Asterisk's own extensions languages or by adding custom, loadable modules.
 
 ## Preparatory Steps
 
 First, you must make a few structural decisions, before you deploy your cloud PBX.
 
-### Location
+### Location of VoIP Server
 
-Voice quality on VoIP calls is affected by network latency, among other factors. Thus, it is advisable to select a datacenter that is closest to the general, geographic location of the majority of your anticipated calls.
+Voice quality on VoIP calls is affected by network latency, among other factors. The standard for traditional landlines is a latency of 45 milliseconds. With VoIP, good call quality can be achieved with a latency of a 75 ms to 100 ms delay. Thus, it is advisable to select a datacenter that is closest to the general, geographic location of the majority of your anticipated calls.
+
+### Accessing VoIP Server After Deployment
+
+To access your IP PBX server after deployment, you will need to open a web browser and navigate to your cloud server's IP address or fully qualified domain name (FQDN). If you wish to assign a FQDN to your VoIP server, make sure that you use a FQDN as your server's Hostname, when you create it (in the next step) via the [DigitalOcean Control Panel](https://www.digitalocean.com/community/articles/the-digitalocean-control-panel). 
 
 ### Server Specifications
 
-Deciding on the best size for your cloud IP-PBX server is not an exact science. Try to best anticipate your average call volume; and then follow the steps outlined in: [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy a `64-bit CentOS 6.4` VPS.
+Deciding on the best size machine for your cloud IP-PBX server is not an exact science. Try to best anticipate your average call volume; and then follow the steps outlined in: [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy a `64-bit CentOS 6.4` virtual private server (VPS).
 
 >#### SSH Keys
 >
-For increased security, it's advisable that you create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets). Windows users may consult [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
+For increased security, it's advisable that you create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) or (for Windows users) [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
 
 Generally speaking, a:
 
-*  512 MB droplet supports approximately `5-15` concurrent calls;
-*  1 GB droplet supports approx. `15-25` concurrent calls;
-*  2 GB droplet supports approx. `25-50` concurrent calls;
-*  4 GB droplet supports approx. `50-100` concurrent calls;
-*  8 GB droplet supports approx. `100-175` concurrent calls;
-*  16 GB droplet supports approx. `175+` concurrent calls;
+*  512 MB droplet supports approximately `5-15` concurrent calls
+*  1 GB supports approx. `15-25` concurrent calls
+*  2 GB supports approx. `25-50` concurrent calls
+*  4 GB supports approx. `50-100` concurrent calls
+*  8 GB supports approx. `100-175` concurrent calls
+*  16 GB supports approx. `175+` concurrent calls
 
-**NOTE:** It is safe to "guess low." If you underestimate your call volume, try adding swap space. *See* [How To Add Swap on CentOS 6](https://www.digitalocean.com/community/articles/how-to-add-swap-on-centos-6). In addition, DigitalOcean makes it easy to resize your cloud server. *See* [How To Resize Droplets Using Snapshots](https://www.digitalocean.com/community/articles/how-to-resize-droplets-using-snapshots).
+**NOTE:** It is safe to "guess low." If you underestimate your call volume, try adding swap space. *See* [How To Add Swap on CentOS 6](https://www.digitalocean.com/community/articles/how-to-add-swap-on-centos-6). In addition, DigitalOcean makes it easy to resize your cloud server, later. *See* [How To Resize Droplets Using Snapshots](https://www.digitalocean.com/community/articles/how-to-resize-droplets-using-snapshots).
+
+### Set the Hostname and FQDN in `/etc/hosts`
+
+Next, follow the steps outlined in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04 or CentOS 6.4](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu_centos.md). If entered properly at the time that your cloud server was created, the machine's `hostname` should already be formatted as a FQDN. If so, feel free to skip to the section titled **Setting the Fully Qualified Domain Name (FQDN)**
 
 ### Setting the Timezone
 
@@ -55,7 +73,7 @@ To view the current timezone, execute:
 
 	date
 
-To change your CentOS server's timezone, you need to create a symbolic link from a zone file in `/usr/share/zoneinfo` to `/etc/localtime`. In doing so, you first need to find the zone file for your timezone (see the examples below for common possibilities):
+To change your CentOS server's timezone, you need to create a symbolic link from a zone file in `/usr/share/zoneinfo/` to `/etc/localtime`. In doing so, you first need to find the zone file for your timezone (see the examples below for common possibilities):
 
 #### Universal Coordinated Time:
 
@@ -65,11 +83,11 @@ To change your CentOS server's timezone, you need to create a symbolic link from
 
 	ln -sf /usr/share/zoneinfo/EST /etc/localtime
 
-#### American Central
+#### American Central:
 
 	ln -sf /usr/share/zoneinfo/US/Central /etc/localtime 
 
-#### American Eastern
+#### American Eastern:
 
 	ln -sf /usr/share/zoneinfo/US/Eastern /etc/localtime
 
@@ -85,9 +103,11 @@ First, navigate to your server's `/tmp` directory by executing the following com
 
 	cd /tmp
 
-Next, download an installation script by executing:
+Next, download the FreePBX Distro [installation script](http://wiki.freepbx.org/display/FD/Converting+Stock+Centos+to+a+FreePBX+Distro) by executing:
 
 	wget http://upgrades.freepbxdistro.org/blank-centos-installer/4.211.64-track/4.211.64-1-Installer-Script.sh
+
+>This script assumes you have a base install of CentOS 6.4. It will convert your system to a FreePBX Distro.
 
 Then, make the script executable:
 
@@ -97,7 +117,60 @@ Run the installer script, by executing:
 
 	./4.211.64-1-Installer-Script.sh
 
-Once completed you should have a full functioning  IP-PBX FreePBX Distro. 
+Once completed you should have a full functioning  IP-PBX server, based on the [FreePBX Distro](http://wiki.freepbx.org/display/FD/FreePBX+Distro+Home).
+
+## Update your FreePBX Distro
+
+FreePBX.org publishes update scripts for new FreePBX Distro releases on its [website](http://wiki.freepbx.org/display/FD/FreePBX-Distro-4.211.64). It is advisable that you bookmark that page and refer to it on a regular basis to obtain any recent upgrade scripts that may have been made available.
+
+To update your FreePBX Distro to the most recent release, you will need to execute a series of individual shell scripts AND do so in sequential order.
+
+### Check Current FreePBX Distro Version
+
+In a terminal, execute:
+
+	cat /etc/schmooze/pbx-version
+
+The FreePBX Distro release identifier is the final number. For example, you previously deployed the following script: <code>4.211.64-1-Installer-Script.sh</code>. Notice the final number: <code>1</code> in this example.
+
+### Download & Execute Applicable Upgrade Script
+
+To execute an update script, enter the following commands in a terminal window:
+
+	cd
+	mkdir ~/FreePBX/UpdateScripts
+	cd ~/FreePBX/UpdateScripts
+
+**Upgrade Step 1:** Execute, in a terminal window:
+
+	wget http://upgrades.freepbxdistro.org/stable/4.211.64/upgrade-4.211.64-2.sh
+
+**Upgrade Step 2:** Make the file executable:
+
+	chmod +x upgrade-4.211.64-2.sh
+
+**Upgrade Step 3:** Execute:
+
+	./upgrade-4.211.64-2.sh
+
+The Distro upgrade script will update both FreePBX components (Asterisk & the FreePBX web GUI) and all base CentOS components.
+
+**Upgrade Step 4:** Specific Script Instructions
+
+Note or carry out any special instructions displayed (if any) at the end of the upgrade, such as to reboot the system.
+
+**Upgrade Step 5:** Confirm New FreePBX Distro Version
+
+Check the updated (now current) version file (as demonstrated above) to confirm the current installed version of FreePBX Distro is the expected newer version.
+
+Repeat <code>Upgrade Steps 1-5</code> for each individual update script, in sequential order:
+
+	http://upgrades.freepbxdistro.org/stable/4.211.64/upgrade-4.211.64-3.sh
+	http://upgrades.freepbxdistro.org/stable/4.211.64/upgrade-4.211.64-4.sh
+	http://upgrades.freepbxdistro.org/stable/4.211.64/upgrade-4.211.64-5.sh
+	http://upgrades.freepbxdistro.org/stable/4.211.64/upgrade-4.211.64-6.sh
+	http://upgrades.freepbxdistro.org/stable/4.211.64/upgrade-4.211.64-7.sh
+	http://upgrades.freepbxdistro.org/stable/4.211.64/upgrade-4.211.64-8.sh
 
 ### Confirm Successful Installation
 
