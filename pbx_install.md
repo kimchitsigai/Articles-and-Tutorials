@@ -173,7 +173,7 @@ As mentioned above, the FreePBX Distro release identifier is the final number. F
 The first time you, ever, execute an update script, enter the following commands in a terminal window (to create a directory in which to store all future Distro-update scripts):
 
 	cd
-	mkdir ~/FreePBX/UpdateScripts
+	mkdir -p ~/FreePBX/UpdateScripts
 	cd ~/FreePBX/UpdateScripts
 
 **Upgrade Step 1:** Execute, in a terminal window:
