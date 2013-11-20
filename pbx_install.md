@@ -3,9 +3,9 @@ Deploy a VoIP Private Branch Exchange (IP PBX) Server on CentOS 6.4
 
 ### Introduction
 
-Since the introduction of the private branch exchange (PBX) in the 1970s, companies have become dependent on the many features that were introduced over time. Today, businesses have a variety of options when it comes to telephone systems. Many are choosing the cloud with a hosted PBX solution in order to reduce capital expenses, maintenance & upgrade costs &ndash; while still reaping the benefits of the latest PBX features.
+Since the introduction of the private branch exchange (PBX) in the 1970s, companies have become dependent on the many features that were introduced over time. Today, businesses have a variety of options when it comes to telephone systems. Many are choosing the cloud with a hosted PBX solution in order to reduce capital expenses, maintenance &amp; upgrade costs &ndash; while still reaping the benefits of the latest PBX features.
 
-This article aims to provide a guide through the (initial) planning and deployment of a [FreePBX](http://www.freepbx.org/) & [Asterisk](http://www.asterisk.org/) VoIP server and assumes you will be starting from a base install of `CentOS 6.4`.
+This article aims to provide a guide through the (initial) planning and deployment of a [FreePBX](http://www.freepbx.org/) &amp; [Asterisk](http://www.asterisk.org/) VoIP server and assumes you will be starting from a base install of `CentOS 6.4`.
 
 ## What is a PBX?
 
@@ -141,7 +141,7 @@ Run the installer script, by executing:
 
 	./4.211.64-1-Installer-Script.sh
 
-Once completed you should have a full functioning  IP-PBX server, based on the [FreePBX Distro](http://wiki.freepbx.org/display/FD/FreePBX+Distro+Home). (If you encountered any problems, feel free to create a post in the FreePBX [Distro Discussion & Help](http://www.freepbx.org/forums/freepbx-distro/distro-discussion-help) forum.)
+Once completed, you should have a full-functioning IP-PBX server, based on the [FreePBX Distro](http://wiki.freepbx.org/display/FD/FreePBX+Distro+Home). (If you encountered any problems, feel free to create a post in the FreePBX [Distro Discussion & Help](http://www.freepbx.org/forums/freepbx-distro/distro-discussion-help) forum.)
 
 ## Update your FreePBX Distro
 
@@ -155,10 +155,10 @@ The FreePBX Version Numbering System tells you at a glance which versions of cor
 
 For example, FreePBX Distro **4.211.64-1** means:
 
-* **4**.211.64-1 - The first number (**4**) represents the Major Track Number
-* 4.**211**.64-1 - The second number (**211**) refers to the FreePBX **GUI version 2.11**
-* 4.211.**64**-1 - The third number (**64**) refers to **CentOS version 6.4**
-* 4.211.64-**1** - The final number (**1**) is used as the *minor release revision* of this Major Track Number
+* **4**.211.64-1 = The first number (**4**) represents the Major Track Number
+* 4.**211**.64-1 = The second number (**211**) refers to the FreePBX **GUI version 2.11**
+* 4.211.**64**-1 = The third number (**64**) refers to **CentOS version 6.4**
+* 4.211.64-**1** = The final number (**1**) is used as the *minor release revision* of this Major Track Number
 
 ### Check Current FreePBX Distro Version
 
@@ -211,7 +211,7 @@ Make sure to save each upgrade-script in `~/FreePBX/UpdateScripts`.
 
 ### Confirm Successful Installation
 
-To confirm that FreePBX & Asterisk were installed successfully, open a web browser and navigate to your cloud server's FQDN or IP address, and you should be greeted by the FreePBX administrator-account setup screen.
+To confirm that FreePBX &amp; Asterisk were installed successfully, open a web browser and navigate to your cloud server's FQDN or IP address, and you should be greeted by the FreePBX administrator-account setup screen.
 
 ![FreePBX Account Setup](http://i.imgur.com/AQPW20I.png)
 
@@ -223,7 +223,7 @@ That username and password will be used in the future to access the FreePBX conf
 
 ## Configure Mail Server
 
-To configure Postfix & Cyrus SASL, begin with **Step Two** of this article: [How To Install Postfix on CentOS 6 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-install-postfix-on-centos-6).
+To configure Postfix &amp; Cyrus SASL, begin with **Step Two** of this article: [How To Install Postfix on CentOS 6 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-install-postfix-on-centos-6); but skip the section related to editing the <code/etc/imapd.conf</code> file.
 
 ## Security
 
@@ -235,6 +235,7 @@ To continue tailoring your Asterisk VoIP server to your specific environment, ch
 
 ## Additional Resources
 
+* [Asterisk &amp; FreePBX Deployment Questionnaire](http://wiki.freepbx.org/display/HTGS/Asterisk+and+FreePBX+Deployment+Questionnaire#AsteriskandFreePBXDeploymentQuestionnaire-SystemGreetings)
 * [FreePBX Wiki](http://wiki.freepbx.org/)
 * [FreePBX Forums](http://www.freepbx.org/forums)
 * [New FreePBX Users | Guide to Diagnosing Problems](http://www.freepbx.org/support/documentation/howtos/howto-new-freepbx-users-guide-to-diagnosing-problems)
