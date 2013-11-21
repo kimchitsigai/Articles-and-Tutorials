@@ -1,4 +1,4 @@
-Why & How-to Set Up a WordPress Local-Development Environment with Vagrant
+Why &amp; How-to Set Up a WordPress Local-Development Environment with Vagrant
 ====
 
 ### The Limitations of LAMP Stacks
@@ -133,6 +133,6 @@ From here, you should experiment. If you are familiar with object caching, the c
 * [Git Reference | by the GitHub team](http://gitref.org/).
 
 
-As always, if you need help with the steps outlined in this HowTo, look to the DigitalOcean Community for assistance by posing your question(s), below.
+As always, if you need help with the steps outlined in this HowTo, look to the DigitalOcean Community for assistance by posting your question(s), below.
 
-<p><div style="text-align: right; font-size:smaller;">Article Submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; 8/1/2013</div></p>
+<p><div style="text-align: right; font-size:smaller;">Article Submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; updated 11/20/2013</div></p>
