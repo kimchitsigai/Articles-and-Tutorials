@@ -1,4 +1,4 @@
-Deploy a VoIP Private Branch Exchange (IP PBX) Server on CentOS 6.4
+How To Install FreePBX on CentOS 6.4
 ====
 
 ### Introduction
