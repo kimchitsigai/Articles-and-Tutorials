@@ -5,7 +5,7 @@ Deploy a VoIP Private Branch Exchange (IP PBX) Server on CentOS 6.4
 
 Since the introduction of the private branch exchange (PBX) in the 1970s, companies have become dependent on the many features that were introduced over time. Today, businesses have a variety of options when it comes to telephone systems. Many are choosing the cloud with a hosted PBX solution in order to reduce capital expenses, maintenance &amp; upgrade costs &ndash; while still reaping the benefits of the latest PBX features.
 
-This article aims to provide a guide through the (initial) planning and deployment of a [FreePBX](http://www.freepbx.org/) &amp; [Asterisk](http://www.asterisk.org/) VoIP server and assumes you will be starting from a base install of `CentOS 6.4`.
+This article aims to provide a guide through the (initial) planning and deployment of a FreePBX &amp; Asterisk VoIP server and assumes you will be starting from a base install of `CentOS 6.4`.
 
 ## What is a PBX?
 
@@ -31,7 +31,7 @@ In addition, users can create new functionality by writing dial-plan scripts in 
 
 ## FreePBX
 
-FreePBX is an open source graphical user interface (GUI) that controls and manages Asterisk. Without FreePBX, Asterisk's configuration files could only be modified via the command line. FreePBX can be installed manually or as part of a pre-configured [Distro](http://wiki.freepbx.org/display/FD/Converting+Stock+Centos+to+a+FreePBX+Distro).
+FreePBX is an open source graphical user interface (GUI) that controls and manages Asterisk. Without FreePBX, Asterisk's configuration files could only be modified via the command line. FreePBX can be installed manually or as part of a pre-configured Distro.
 
 #### FreePBX Distro
 
@@ -40,17 +40,17 @@ The FreePBX Distro is an open source Unified Communications (UC) Server that inc
 * Apache HTTP Server
 * Cyrus SASL (Simple Authentication Security Layer)
 * Dnsmasq
-* [Fail2ban](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-centos-6)
-* [iptables](https://www.digitalocean.com/community/articles/how-to-setup-a-basic-ip-tables-configuration-on-centos-6) (Firewall)
+* Fail2ban
+* iptables (Firewall)
 * Mailx
 * MySQL Server
 * Network Time Protocol (NTP)
-* [OpenVPN Server](https://www.digitalocean.com/community/articles/how-to-setup-and-configure-an-openvpn-server-on-centos-6) (*although **not** configured to start on boot, by default*)
-* [Postfix](https://www.digitalocean.com/community/articles/how-to-install-postfix-on-centos-6)
+* OpenVPN Server (*although **not** pre-configured to start on boot, by default*)
+* Postfix
 * Prosody XMPP Server
 * TFTP Server
-* [Very Secure FTP Daemon](https://www.digitalocean.com/community/articles/how-to-set-up-vsftpd-on-centos-6--2) (vsfptd)
-* [Vim text editor](https://www.digitalocean.com/community/articles/installing-and-using-the-vim-text-editor-on-a-cloud-server) (you may be interested in [How To Use Vim for Advanced Editing of Plain Text or Code on a VPS](https://www.digitalocean.com/community/articles/how-to-use-vim-for-advanced-editing-of-plain-text-or-code-on-a-vps--2))
+* Very Secure FTP Daemon (vsfptd)
+* Vim text editor (you may be interested in [How To Use Vim for Advanced Editing of Plain Text or Code on a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-use-vim-for-advanced-editing-of-plain-text-or-code-on-a-vps--2))
 
 The FreePBX Distro is based on CentOS, which has binary compatibility with Red Hat Enterprise Linux. FreePBX is a very large part of why Asterisk has been as successful as it has.
 
@@ -64,7 +64,7 @@ Voice quality on VoIP calls is affected by network latency, among other factors.
 
 ### Accessing VoIP Server After Deployment
 
-To access your IP PBX server after deployment, you will need to open a web browser and navigate to your cloud server's IP address or fully qualified domain name (FQDN). If you wish to assign a FQDN to your VoIP server, make sure that you assign a FQDN as your server's hostname &ndash; when you create your DigitalOcean cloud server in the next step &ndash; via the [DigitalOcean Control Panel](https://www.digitalocean.com/community/articles/the-digitalocean-control-panel). 
+To access your IP PBX server after deployment, you will need to open a web browser and navigate to your cloud server's IP address or fully qualified domain name (FQDN). If you wish to assign a FQDN to your VoIP server, make sure that you assign a FQDN as your server's hostname &ndash; when you create your DigitalOcean cloud server in the next step &ndash; via the DigitalOcean Control Panel. 
 
 ### Server Specifications
 
@@ -72,7 +72,7 @@ Deciding on the best size machine for your cloud IP-PBX server is not an exact s
 
 >#### SSH Keys
 >
-For increased security, it's advisable that you create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) or &ndash; for Windows users &ndash; [How To Create SSH Keys with PuTTY to Connect to a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
+For increased security, it's advisable that you create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to [How To Create SSH Keys with PuTTY to Connect to a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps), instead).
 
 Generally speaking, a:
 
@@ -87,7 +87,7 @@ Generally speaking, a:
 
 ### Set the Hostname and FQDN in `/etc/hosts`
 
-Next, follow the steps outlined in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04 or CentOS 6.4](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu_centos.md). If entered properly at the time that your cloud server was created, the machine's `hostname` should already be formatted as a FQDN. If so, feel free to skip to the section titled **Setting the Fully Qualified Domain Name (FQDN)**.
+Next, follow the steps outlined in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04 or CentOS 6.4](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu_centos.md). If entered properly at the time that your cloud server was created, the machine's `hostname` should already be formatted as a FQDN. If so, feel free to skip to the section titled [Setting the Fully Qualified Domain Name (FQDN)](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu_centos.md#setting-the-fully-qualified-domain-name-fqdn).
 
 ### Setting the Timezone
 
@@ -127,7 +127,7 @@ First, navigate to your server's `/tmp` directory by executing the following com
 
 	cd /tmp
 
-Next, download the FreePBX Distro [installation script](http://wiki.freepbx.org/display/FD/Converting+Stock+Centos+to+a+FreePBX+Distro) by executing:
+Next, download the FreePBX Distro installation script by executing:
 
 	wget http://upgrades.freepbxdistro.org/blank-centos-installer/4.211.64-track/4.211.64-1-Installer-Script.sh
 
@@ -141,7 +141,7 @@ Run the installer script, by executing:
 
 	./4.211.64-1-Installer-Script.sh
 
-Once completed, you should have a full-functioning IP-PBX server, based on the [FreePBX Distro](http://wiki.freepbx.org/display/FD/FreePBX+Distro+Home). (If you encountered any problems, feel free to create a post in the FreePBX [Distro Discussion & Help](http://www.freepbx.org/forums/freepbx-distro/distro-discussion-help) forum.)
+Once completed, you should have a full-functioning IP-PBX server, based on the FreePBX Distro. (If you encountered any problems, feel free to create a post in the FreePBX [Distro Discussion & Help](http://www.freepbx.org/forums/freepbx-distro/distro-discussion-help) forum.)
 
 ## Update your FreePBX Distro
 
@@ -223,7 +223,7 @@ That username and password will be used in the future to access the FreePBX conf
 
 ## Configure Mail Server
 
-To configure Postfix &amp; Cyrus SASL, begin with **Step Two** of this article: [How To Install Postfix on CentOS 6 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-install-postfix-on-centos-6); but skip the section related to editing the <code/etc/imapd.conf</code> file.
+To configure Postfix &amp; Cyrus SASL, begin with **Step Two** of this article: [How To Install Postfix on CentOS 6 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-install-postfix-on-centos-6); but skip the section related to editing the <code>/etc/imapd.conf</code> file.
 
 ## Security
 
