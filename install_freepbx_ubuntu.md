@@ -9,7 +9,7 @@ How To Install FreePBX on Ubuntu 12.04
 
 Since the introduction of the private branch exchange (PBX) in the 1970s, companies have become dependent on the many features that were introduced over time. Today, businesses have a variety of options when it comes to telephone systems. Many are choosing the cloud with a hosted PBX solution in order to reduce capital expenses, maintenance &amp; upgrade costs &ndash; while still reaping the benefits of the latest PBX features.
 
-This article aims to provide a guide through the (initial) planning and deployment of a FreePBX &amp; Asterisk VoIP server and assumes you will be starting from a base install of `Ubuntu 12.04`
+This article aims to provide a guide through the (initial) planning and deployment of a FreePBX &amp; Asterisk VoIP server on `Ubuntu 12.04`
 
 ## What is a PBX?
 
@@ -35,7 +35,7 @@ In addition, users can create new functionality by writing dial-plan scripts in 
 
 ## FreePBX
 
-FreePBX is an open source graphical user interface (GUI) that controls and manages Asterisk. Without FreePBX, Asterisk's configuration files could only be modified via the command line. FreePBX can be installed manually or as part of a pre-configured [Distro](https://www.digitalocean.com/community/articles/how-to-install-freepbx-on-centos-6-4).
+FreePBX is an open source graphical user interface (GUI) that controls and manages Asterisk. Without FreePBX, Asterisk's configuration files could only be modified via the command line. FreePBX can be installed manually (which this article will guide you through) or as part of a pre-configured [Distro on CentOS](https://www.digitalocean.com/community/articles/how-to-install-freepbx-on-centos-6-4).
 
 ## Preparatory Steps
 
@@ -51,15 +51,7 @@ To access your IP PBX server after deployment, you will need to open a web brows
 
 ### Server Specifications
 
-Deciding on the best size machine for your cloud IP-PBX server is not an exact science. Try to best anticipate your average call volume; and then follow the steps outlined in: [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy a `64-bit Ubuntu 12.04` virtual private server (VPS).
-
->#### SSH Keys
->
-For increased security, it is advisable that you:
-* create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, blow); and
-* disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
-
-Generally speaking, a:
+Deciding on the best size machine for your cloud IP-PBX server is not an exact science. Try to best anticipate your average call volume. Generally speaking, a:
 
 *  512 MB droplet can support approximately `5-15` concurrent calls
 *  1 GB supports approx. `15-25` concurrent calls
@@ -68,7 +60,16 @@ Generally speaking, a:
 *  8 GB supports approx. `100-175` concurrent calls
 *  16 GB supports approx. `175+` concurrent calls
 
-**NOTE:** It is safe to "guess low." If you underestimate your call volume, try adding swap space. *See* [How To Add Swap on Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-add-swap-on-ubuntu-12-04). In addition, DigitalOcean makes it easy to resize your cloud server, later. *See* [How To Resize Droplets Using Snapshots | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-resize-droplets-using-snapshots).
+**NOTE:** It is safe to "guess low." If you underestimate your call volume, try adding swap space. *See* [How To Add Swap on Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-add-swap-on-ubuntu-12-04). In addition, DigitalOcean makes it easy to resize your cloud server, later.
+
+Now, follow the steps outlined in: [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of an `Ubuntu 12.04 64-bit` virtual private server (VPS).
+
+>#### SSH Keys
+>
+>For increased security, it is advisable that you:
+>
+1. Create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); **and**
+2. Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
 
 ### Set the Hostname and FQDN in `/etc/hosts`
 
@@ -92,7 +93,7 @@ and follow the on-screen prompts.
 
 Now you need to install the available software updates for your Ubuntu server. Doing so patches security holes in packages and helps protect your droplet against unauthorized access.
 
-	sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade && sudo apt-get -y autoremove
+	sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade && sudo apt-get -y autoremove && sudo reboot now
 
 ## Installation
 
