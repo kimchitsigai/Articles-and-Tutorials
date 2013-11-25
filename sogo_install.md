@@ -1,7 +1,7 @@
 # ~~~~ WIP ~~~~ DRAFT ~~~~ WIP ~~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted*
 
-Share your Calendars, Address Books and Mail with SOGo Groupware Server on Ubuntu 12.04
+Share your Calendars, Address Books &amp; Mail with SOGo Groupware Server on Ubuntu 12.04
 ====
 
 ### Introduction
@@ -20,20 +20,27 @@ SOGo is standard-compliant. It supports CalDAV, CardDAV, GroupDAV, iMIP and iTIP
 
 ## Requirements
 
-SOGo reuses many components in an infrastructure. Thus, it requires the following:
+SOGo reuses many components in an infrastructure:
 
-* Database server (e.g. MySQL or PostgreSQL);
 * LDAP server (e.g. OpenLDAP);
+* Database server (e.g. MySQL or PostgreSQL);
 * SMTP server (e.g. Postfix);
 * IMAP server (e.g. Cyrus or Dovecot).
 
-This article will guide you through the installation of all of these programs on `Ubuntu 12.04`.
-
 ## Prerequisites
+
+Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of an `Ubuntu 12.04 64-bit` virtual private server (VPS).
+
+>#### SSH Keys
+>
+>For increased security, it is advisable that you:
+>
+1. Create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); **and**
+2. Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
 
 #### Security Hardening
 
-Any server accessible from the public Internet should be security hardened, and your groupware server is no exception:
+Any server accessible from the public Internet should be security hardened, and a groupware server is no exception:
 
 * Change your SSH port from the default Port 22 to a random port **below 1024**, as described in **Step Five** of [Initial Server Setup with Ubuntu 12.04](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04);
 
@@ -49,21 +56,19 @@ Any server accessible from the public Internet should be security hardened, and 
 
 #### Hostname & FQDN
 
-Set your server's hostname and Fully Qualified Domain Name by implementing the steps in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu.md).
+Set your server's hostname and Fully Qualified Domain Name by implementing the steps in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04 or CentOS 6.4](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu_centos.md).
 
 #### Timezone
 
-You can change your server's timezone to whatever you want; altough it may be best to set it to the same timezone of most of your users.
+You can change your server's timezone to whatever you want; altough it may be best to set it to the same timezone of most of your users. To do so, simply execute, in a terminal:
 
     sudo dpkg-reconfigure tzdata
 
+and follow the instructions in the ensuing on-screen prompts.
+
 ## Install LDAP Server
 
-The OpenLDAP server is in Ubuntu's default repositories under the package "slapd", so we can install it easily with apt-get. We will also install some additional utilities:
-
-	sudo apt-get -y install slapd ldap-utils
-
-You will be asked to enter and confirm an administrator password for the administrator LDAP account.
+OpenLDAP is used by many to manage groups and users. While SOGo can function perfectly without an LDAP server, it is not practical to do so in environments with more than a handful of users. Thus, if you hope to use SOGo for more than family and a few friend, follow the steps outlined in [How To Install and Configure a Basic LDAP Server on an Ubuntu 12.04 VPS](https://www.digitalocean.com/community/articles/how-to-install-and-configure-a-basic-ldap-server-on-an-ubuntu-12-04-vps).
 
 ### Configure LDAP for SOGo Integration
 
