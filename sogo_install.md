@@ -38,22 +38,6 @@ Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virt
 1. Create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); **and**
 2. Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
 
-#### Security Hardening
-
-Any server accessible from the public Internet should be security hardened, and a groupware server is no exception:
-
-* Change your SSH port from the default Port 22 to a random port **below 1024**, as described in **Step Five** of [Initial Server Setup with Ubuntu 12.04](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04);
-
-* Configure a [firewall](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server) and make sure to open your **custom SSH port** and **TCP Ports 25 &amp; 465**;
- * The default firewall configuration tool for Ubuntu is `ufw`. To open the necessary ports, simply execute:
-
-    		sudo ufw allow [custom SSH port below 1024]/tcp
-			sudo ufw allow 
-			sudo ufw enable
-			sudo ufw status verbose
-
-* Either [disable password logins](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps) or deploy [Fail2ban](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04) &amp; [DenyHosts](https://www.digitalocean.com/community/articles/how-to-install-denyhosts-on-ubuntu-12-04).
-
 #### Hostname & FQDN
 
 Set your server's hostname and Fully Qualified Domain Name by implementing the steps in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04 or CentOS 6.4](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu_centos.md).
@@ -267,6 +251,46 @@ And change the line to add the “n” letter in the right placement like the fo
 Then restart Postfix
 
 	sudo service postfix restart
+
+## Dovecot Installation
+
+To install Dovecot, execute:
+
+	sudo apt-get install dovecot-imapd
+
+Configure Dovecot by creating a new file:
+
+	sudo vim /etc/dovecot/local.conf
+
+and paste the following text:
+
+	mail_location = maildir:~/.Maildir
+	disable_plaintext_auth = no
+ 
+	passdb {
+  	driver = static
+  	args = nopassword=y host=127.0.0.1
+	}
+
+Restart Dovecot:
+
+	sudo service dovecot restart
+
+### Security Hardening
+
+Any server accessible from the public Internet should be security hardened, and a groupware server is no exception. While security best practices are not within the scope of this article, 
+
+* Change your SSH port from the default Port 22 to a random port **below 1024**, as described in **Step Five** of [Initial Server Setup with Ubuntu 12.04](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04);
+
+* Configure a [firewall](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server) and make sure to open your **custom SSH port** and **TCP Ports 25 &amp; 465**;
+ * The default firewall configuration tool for Ubuntu is `ufw`. To open the necessary ports, simply execute:
+
+    		sudo ufw allow [custom SSH port below 1024]/tcp
+			sudo ufw allow 
+			sudo ufw enable
+			sudo ufw status verbose
+
+* Either [disable password logins](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps) or deploy [Fail2ban](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04) &amp; [DenyHosts](https://www.digitalocean.com/community/articles/how-to-install-denyhosts-on-ubuntu-12-04).
 
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
