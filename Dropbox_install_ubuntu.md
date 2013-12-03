@@ -1,7 +1,8 @@
 ~~~ WIP ~~~
+
 *Pull Requests gladly accepted*
 
-How To Install & Configure Headless Dropbox as a Service on Ubuntu 12.04
+How To Install &amp; Configure Headless Dropbox as a Service on Ubuntu 12.04
 ====
 
 ### Introduction
@@ -10,7 +11,7 @@ Dropbox is a popular cloud, file-hosting service for sharing files and keeping f
 
 ## Prerequisite
 
-You do **NOT** want to give Dropbox &ndash; nor any other external program, for that matter &ndash; unfettered access to all of the files on your server. Therefore, avoid giving the Dropbox daemon root access by, at a minimum, first creating a non-root user, as outlined in [Initial Server Setup with Ubuntu 12.04](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04).
+You do **NOT** want to give Dropbox &ndash; nor any other external program, for that matter &ndash; unfettered access to all of the files on your server. Therefore, at a minimum, first create a non-root user  (with <code>sudo</code> privileges) for yourself, as outlined in [Initial Server Setup with Ubuntu 12.04](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04).
 
 ## Install Dropbox via command line
 
@@ -147,7 +148,7 @@ Then, tap (on your keyboard) the <code>i</code> key and copy &amp; paste the fol
 
 To save the file, tap the following keys: <code>Esc</code>, <code>:</code>, <code>w</code>, <code>q</code>, <code>Enter</code>.
 
-Next, you need to make the start-up script executable, by executing:
+Next, you need to make the start-up script executable:
 
 	sudo chmod +x /etc/init.d/dropbox
 
@@ -202,13 +203,21 @@ To remove Dropbox from your VPS, execute (each line, individually):
 	sudo rm -rf ~/.dropbox* ~/Dropbox
 	sudo update-rc.d dropbox remove
 
+## Security
+
+Any server accessible from the public Internet should be security hardened. Security best practices, however, are not within the scope of this article. Nevertheless, you need to be cognizant of the fact that, under the setup outlined in this article, Dropbox runs as the user which owns the Dropbox account. Thus, Dropbox not only has all of the user's rights under <code>~/Dropbox</code>, but it <b>also</b> has full rights to any other directory and/or file in the user's home directory.
+
+You mitigate this exposure by installing the Dropbox client in a [chroot](https://help.ubuntu.com/community/BasicChroot) jail or limiting the Dropbox daemon's access to other files on your VPS with [AppArmor](https://help.ubuntu.com/community/AppArmor) &ndash; a Linux security-module implementation of name-based access controls, installed and loaded by default on Ubuntu. Either of these options, either individually or in tandem, provide an effective way to enhance your security.
+
 ## Additional Resources
 
 * [Dropbox Forums](https://forums.dropbox.com/)
+* [The Unofficial Dropbox Wiki](https://www.dropboxwiki.com/)
 
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
 <p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; DATE</div></p>
 
 ~~~ WIP ~~~
+
 *Pull Requests gladly accepted*
