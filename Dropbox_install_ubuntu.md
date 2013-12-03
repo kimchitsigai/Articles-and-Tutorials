@@ -5,9 +5,13 @@ How To Install & Configure Headless Dropbox as a Service on Ubuntu 12.04
 
 Dropbox is a popular cloud, file-hosting service for sharing files and keeping files synchronized across various devices. Among other uses, Dropbox provides (i) a convenient way to back-up important files on your cloud server and/or (ii) the option of editing files on your virtual private server ("VPS"), locally, and having those modifications automatically synced on your VPS.
 
+## Prerequisite
+
+You do **NOT** want to give Dropbox &ndash; nor any other external program, for that matter &ndash; unfettered access to all of the files on your server. Therefore, avoid giving the Dropbox daemon root access by, at a minimum, first creating a non-root user, as outlined in [Initial Server Setup with Ubuntu 12.04](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04).
+
 ## Install Dropbox via command line
 
-The Dropbox daemon is compatible with both the 32-bit and 64-bit Ubuntu server. To install, execute the following command in a terminal:
+The Dropbox daemon is compatible with both the 32-bit and 64-bit Ubuntu server. To install, log into your VPS as a non-root user and execute the following command in a terminal:
 
 #### For 32-bit Operating System
 
@@ -17,13 +21,13 @@ The Dropbox daemon is compatible with both the 32-bit and 64-bit Ubuntu server. 
 
 	cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 
-## Sync Files on Your VPS with Your Dropbox Account
+## Link Your VPS with Your Dropbox Account
 
 Next, run the Dropbox daemon from the newly created <code>.dropbox-dist</code> folder, by executing:
 
 	~/.dropbox-dist/dropboxd
 
-You will be asked to copy and paste a link in a web browser to create a new account or add your VPS to an existing account. The instructions will look something like:
+You will be asked to copy and paste a link in a web browser to create a new account or to add your VPS to an existing account. The instructions will look something like:
 
 	This client is not linked to any account...
 	Please visit https://www.dropbox.com/cli_link?host_id=36186kw8r2u75w4m6z47387vnp8y67xo to link this machine.
@@ -70,7 +74,8 @@ Then, tap (on your keyboard) the <code>i</code> key and copy &amp; paste the fol
 	# Required-Stop:	$local_fs $network $remote_fs $syslog
 	# Default-Start:	2 3 4 5
 	# Default-Stop:		0 1 6
-	# Short-Desc.:		Start dropbox service at boot time
+	# X-Interactive:	false
+	# Short-Desc.:		Start dropboxd at boot time
 	# Description:		Control dropbox service with the start-stop-daemon
 	### END INIT INFO
 	
@@ -141,7 +146,7 @@ To save the file, tap the following keys: <code>Esc</code>, <code>:</code>, <cod
 
 Next, you need to make the start-up script executable, by executing:
 
-	sudo chmod a+x /etc/init.d/dropbox
+	sudo chmod +x /etc/init.d/dropbox
 
 Then, have the Dropbox daemon start automatically upon a server reboot by adding the script to the default system start-up run levels:
 
