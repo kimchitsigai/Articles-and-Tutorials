@@ -1,4 +1,4 @@
-How To Install & Configure Headless Dropbox on Ubuntu 12.04
+How To Install & Configure Headless Dropbox as a Service on Ubuntu 12.04
 ====
 
 ### Introduction
@@ -7,7 +7,7 @@ Dropbox is a popular cloud, file-hosting service for sharing files and keeping f
 
 ## Install Dropbox via command line
 
-The Dropbox daemon is compatible with both 32-bit and 64-bit Linux servers. To install, execute the following command in a terminal:
+The Dropbox daemon is compatible with both the 32-bit and 64-bit Ubuntu server. To install, execute the following command in a terminal:
 
 #### For 32-bit Operating System
 
@@ -17,18 +17,18 @@ The Dropbox daemon is compatible with both 32-bit and 64-bit Linux servers. To i
 
 	cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 
-## Sync Ubuntu Server with Your Dropbox Account
+## Sync Files on Your VPS with Your Dropbox Account
 
 Next, run the Dropbox daemon from the newly created <code>.dropbox-dist</code> folder, by executing:
 
 	~/.dropbox-dist/dropboxd
 
-If you are running Dropbox on your server for the first time, you will be asked to copy and paste a link in a web browser to create a new account or add your server to an existing account. The instructions will look something like:
+You will be asked to copy and paste a link in a web browser to create a new account or add your VPS to an existing account. The instructions will look something like:
 
 	This client is not linked to any account...
 	Please visit https://www.dropbox.com/cli_link?host_id=36186kw8r2u75w4m6z47387vnp8y67xo to link this machine.
 
-This process issues a token for Dropbox to use, so you don't have to store your Dropbox password directly on your VPS. Now, copy &amp; paste the link to any web browser, on any computer &ndash; the effect of which will link your cloud server to your Dropbox account. If successful, the following message will be displayed:
+This process issues a token for Dropbox to use, so that you won't have to store your Dropbox password directly on your VPS. Now, copy &amp; paste the link to any web browser, on any computer &ndash; the effect of which will link your cloud server to your Dropbox account. If successful, the following message will be displayed:
 
 	Client successfully linked, Welcome [Your_Name]!
 
@@ -48,7 +48,7 @@ You can easily backup your web site's files, to your Dropbox account, by executi
 
 	sudo ln -s /var/www/example.com ~/Dropbox/example.com
 
-This symbolic link will cause Dropbox to treat <code>/var/www/example.com</code> as if it resides inside the Dropbox folder in your home directory. All other Dropbox clients will see <code>example.com</code> as a folder within the Dropbox folder, and the files within the <code>example.com</code> directory will be available to you &ndash; across different devices on which you have installed &ndash; other Dropbox clients.
+This symbolic link will cause Dropbox to treat <code>/var/www/example.com</code> as if it resides inside the Dropbox folder in your home directory. All other Dropbox clients will see <code>example.com</code> as a folder within the Dropbox folder, and the files within the <code>example.com</code> directory will be available to you &ndash; across different devices on which you have installed other Dropbox clients.
 
 **Practice Tip:** Not only will your files be backed up, but you can edit your files on other devices &ndash; such as editing WordPress theme or plugin files with [Notepad++](http://notepad-plus-plus.org/) on a local, Windows machine. Any modifications you make, locally, will automatically be synced on your web server &ndash; providing an efficient workflow.
 
@@ -74,7 +74,7 @@ Then, tap (on your keyboard) the <code>i</code> key and copy &amp; paste the fol
 	# Description:		Control dropbox service with the start-stop-daemon
 	### END INIT INFO
 	
-	# users separated by spaces
+	# users separated by spaces or no spaces if only 1 user
 	DROPBOX_USERS="user1 user2"
 	
 	# location of daemon
