@@ -1,3 +1,6 @@
+~~~ WIP ~~~
+*Pull Requests gladly accepted*
+
 How To Install & Configure Headless Dropbox as a Service on Ubuntu 12.04
 ====
 
@@ -11,7 +14,7 @@ You do **NOT** want to give Dropbox &ndash; nor any other external program, for 
 
 ## Install Dropbox via command line
 
-The Dropbox daemon is compatible with both the 32-bit and 64-bit Ubuntu server. To install, log into your VPS as a non-root user and execute the following command in a terminal:
+The Dropbox daemon is compatible with both the 32-bit and 64-bit Ubuntu server. To install, log into your VPS as a non-root user and execute either of the following commands in a terminal:
 
 #### For 32-bit Operating System
 
@@ -206,3 +209,6 @@ To remove Dropbox from your VPS, execute (each line, individually):
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
 <p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; DATE</div></p>
+
+~~~ WIP ~~~
+*Pull Requests gladly accepted*
