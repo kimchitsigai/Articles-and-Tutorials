@@ -1,7 +1,3 @@
-~~~ WIP ~~~
-
-*Pull Requests gladly accepted*
-
 How To Install &amp; Configure Headless Dropbox as a Service on Ubuntu 12.04
 ====
 
@@ -25,18 +21,20 @@ The Dropbox daemon is compatible with both the 32-bit and 64-bit Ubuntu server. 
 
 	cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 
-## Link Your VPS with Your Dropbox Account
+## Link Your VPS to Your Dropbox Account
 
-Next, run the Dropbox daemon from the newly created <code>.dropbox-dist</code> folder, by executing:
+Next, manually run the Dropbox daemon from the newly-created <code>.dropbox-dist</code> folder, by executing:
 
 	~/.dropbox-dist/dropboxd
 
-You will be asked to copy and paste a link in a web browser to create a new account or to add your VPS to an existing account. The instructions will look something like:
+The daemon will then generate a token and direct you to copy &amp; paste a link in a web browser to add your VPS to an existing (or to create a new) account. The instructions will look something like:
 
 	This client is not linked to any account...
 	Please visit https://www.dropbox.com/cli_link?host_id=36186kw8r2u75w4m6z47387vnp8y67xo to link this machine.
 
-This process issues a token for Dropbox to use, so that you won't have to store your Dropbox password directly on your VPS. Now, copy &amp; paste the link to any web browser, on any computer &ndash; the effect of which will link your cloud server to your Dropbox account. If successful, the following message will be displayed:
+The use of a token relieves you of having to store your Dropbox password directly on your VPS.
+
+Now, copy &amp; paste the link to any web browser, on any computer &ndash; the effect of which will link your cloud server to your Dropbox account. If successful, the following message will be displayed:
 
 	Client successfully linked, Welcome [Your_Name]!
 
@@ -54,9 +52,9 @@ The simplest way to sync files on your cloud server that reside outside of your 
 
 You can easily backup your web site's files, to your Dropbox account, by executing:
 
-	sudo ln -s /var/www/example.com ~/Dropbox/example.com
+	ln -s /var/www/example.com ~/Dropbox/example.com
 
-This symbolic link will cause Dropbox to treat <code>/var/www/example.com</code> as if it resides inside the Dropbox folder in your home directory. All other Dropbox clients will see <code>example.com</code> as a folder within the Dropbox folder, and the files within the <code>example.com</code> directory will be available to you &ndash; across different devices on which you have installed other Dropbox clients.
+This symbolic link will cause Dropbox to treat <code>/var/www/example.com</code> as if it resides inside the Dropbox folder in your home directory. All of your other Dropbox clients will see <code>example.com</code> as a folder within the Dropbox folder, and the files within the <code>example.com</code> directory will be available to you &ndash; across the various devices on which you have installed other Dropbox clients, if any.
 
 **Practice Tip:** Not only will your files be backed up, but you can edit your files on other devices &ndash; such as editing WordPress theme or plugin files with [Notepad++](http://notepad-plus-plus.org/) on a local, Windows machine. Any modifications you make, locally, will automatically be synced on your web server &ndash; providing an efficient workflow.
 
@@ -83,10 +81,10 @@ Then, tap (on your keyboard) the <code>i</code> key and copy &amp; paste the fol
 	# Description:		Control dropbox service with the start-stop-daemon
 	### END INIT INFO
 	
-	# users separated by spaces or no spaces if only 1 user
+	# Users separated by spaces (or no spaces if only 1 user)
 	DROPBOX_USERS="user1 user2"
 	
-	# location of daemon
+	# Location of daemon
 	DAEMON=.dropbox-dist/dropbox
 	
 	start() {
@@ -152,7 +150,7 @@ Next, you need to make the start-up script executable:
 
 	sudo chmod +x /etc/init.d/dropbox
 
-Then, have the Dropbox daemon start automatically upon a server reboot by adding the script to the default system start-up run levels:
+Then, add the script to the default, system start-up runlevels (to start the Dropbox daemon automatically upon a server reboot):
 
 	sudo update-rc.d dropbox defaults
 
@@ -164,21 +162,21 @@ Finally, start the Dropbox daemon without the need to reboot your VPS:
 
 	sudo service dropbox start
 
-As previously mentioned, the <code>init.d</code> script you created will allow you to control the Dropbox client like any other Ubuntu service, e.g.
+As previously mentioned, the <code>init.d</code> script you created will allow you to control the Dropbox daemon like any other Ubuntu service, e.g.
 
 	sudo service dropbox start|stop|reload|force-reload|restart|status
 
 ## Dropbox CLI
 
-It is recommended that you download the official [Dropbox CLI](http://www.dropboxwiki.com/tips-and-tricks/using-the-official-dropbox-command-line-interface-cli) to check the sync status of your files, by executing:
+To control the Dropbox *client* (not to be confused with the <code>dropbox daemon</code>), it is recommended that you download the official [Dropbox CLI](http://www.dropboxwiki.com/tips-and-tricks/using-the-official-dropbox-command-line-interface-cli), by executing:
 
 	wget -O ~/.dropbox/dropbox.py "https://www.dropbox.com/download?dl=packages/dropbox.py"
 
-Make the Dropbox Python Script executable:
+Next, make the Dropbox Python script executable:
 
 	sudo chmod +x ~/.dropbox/dropbox.py
 
-Now, you can easily check the status of the Dropbox client (not to be confused with the <code>dropbox daemon</code>) by executing the following command:
+Now, you can easily check the status of the Dropbox client by executing the following command:
 
 	~/.dropbox/dropbox.py status
 
@@ -192,22 +190,24 @@ You can also use the <code>exclude</code> command to keep specific files or fold
 
 ## Revoke Account Token
 
-To revoke the token that was issued for the Dropbox instance on your cloud server, open a web browser and navigate to [https://www.dropbox.com/account#security](https://www.dropbox.com/account#security). Then, click on <code>unlink</code> next to your cloud server's host name.
+To revoke the token that was issued for the Dropbox instance on your VPS, open a web browser and navigate to [https://www.dropbox.com/account#security](https://www.dropbox.com/account#security). Then, click on <code>unlink</code> next to your cloud server's host name.
 
-## Remove Dropbox Client
+**Note:** The files in your <code>~/Dropbox</code> folder will **not** be deleted, automatically.
+
+## Remove Dropbox
 
 To remove Dropbox from your VPS, execute (each line, individually):
 
-	sudo sudo service dropbox stop
+	sudo service dropbox stop
 	sudo rm /etc/init.d/dropbox
 	sudo rm -rf ~/.dropbox* ~/Dropbox
 	sudo update-rc.d dropbox remove
 
 ## Security
 
-Any server accessible from the public Internet should be security hardened. Security best practices, however, are not within the scope of this article. Nevertheless, you need to be cognizant of the fact that, under the setup outlined in this article, Dropbox runs as the user which owns the Dropbox account. Thus, Dropbox not only has all of the user's rights under <code>~/Dropbox</code>, but it <b>also</b> has full rights to any other directory and/or file in the user's home directory.
+Any server accessible from the public Internet should be security hardened. While security best practices are outside the scope of this article, you need to be cognizant of the fact that, under the setup outlined in this article, Dropbox runs as the system user it is associated with. Thus, Dropbox not only has all of that user's rights under <code>~/Dropbox</code>, but it <b>also</b> has full rights to any other directory and/or file in the user's home directory.
 
-You mitigate this exposure by installing the Dropbox client in a [chroot](https://help.ubuntu.com/community/BasicChroot) jail or limiting the Dropbox daemon's access to other files on your VPS with [AppArmor](https://help.ubuntu.com/community/AppArmor) &ndash; a Linux security-module implementation of name-based access controls, installed and loaded by default on Ubuntu. Either of these options, either individually or in tandem, provide an effective way to enhance your security.
+You can mitigate this exposure by installing Dropbox in a [chroot](https://help.ubuntu.com/community/BasicChroot) jail or limiting the Dropbox daemon's access to other files on your VPS with [AppArmor](https://help.ubuntu.com/community/AppArmor) &ndash; a Linux security-module implementation of name-based access controls, installed and loaded by default on Ubuntu. Either of these options &ndash; either individually or in tandem &ndash; provide an effective way to enhance your security.
 
 ## Additional Resources
 
@@ -216,8 +216,4 @@ You mitigate this exposure by installing the Dropbox client in a [chroot](https:
 
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
-<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; DATE</div></p>
-
-~~~ WIP ~~~
-
-*Pull Requests gladly accepted*
+<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; December 3, 2013</div></p>
