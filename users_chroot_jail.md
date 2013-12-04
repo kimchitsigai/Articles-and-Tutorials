@@ -1,9 +1,17 @@
-How to Create Isolated File Directories For Your Users
-====
+~~~ WIP ~~~
+===
+
+*Pull Requests gladly accepted*
+
+## How to Create Isolated File Directories For Ubuntu 12.04 Users with Jailkit
 
 ### Introduction
 
+A chroot is a way of isolating applications and/or users  from other parts of your server, by putting them in (what is commonly referred to as) a jail. In other words, a chroot jail can be used to sectioned off a particular user from entire sections of your server's filesystem. Without a chroot jail, a user with even limited file permissions would still be able to navigate to top-level directories. Without chroot, nothing would prevent the user from navigating up to system-critical directories. Many control panels that reconfigure web servers for shared hosting will automatically create chroot directories for user accounts.
+
 ## Create Basic chroot Environment
+
+To create a jail, you simply create a folder that has a replication of the directory structure of a normal Linux box. The difference is that you only copy, in that chroot directory, the bare minimum of what you need. 
 
 	sudo mkdir /var/chroot
 
@@ -116,9 +124,12 @@ At this point you can test your settings by log in to you server with configured
 
 As you can see setting the ssh chroot jail is a fairly simple process. If a user does not have its home user directory available in a chroot jail after login s/he will end up in /. You can create and further configure your chroot by creating a user home directory, defining bash environment, etc.
 
+Chroot is very useful for basic preventative security, but it is not designed to prevent deliberate attempts to gain root access and attack a server. For that there are other security measures you can take. Nevertheless, chroot helps tremendously to at least make it more difficult to exploit your dedicated server.
+
 ## Additional Resources
 
 * [BasicChroot | Ubuntu Docs](https://help.ubuntu.com/community/BasicChroot)
+* [How To Use Filezilla to Transfer & Manage Files Securely on your VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-use-filezilla-to-transfer-and-manage-files-securely-on-your-vps)
 
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
