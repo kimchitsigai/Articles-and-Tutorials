@@ -15,9 +15,7 @@ Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virt
 
 ### 32-bit vs. 64-bit systems
 
-Webmin uses approximately 10-12 MB of memory on a 32-bit system and about 50% more on a 64-bit system. If you deploy a cloud server with less than 3 GB of RAM, a 32-bit operating system is recommended; and this is especially true if you have 1 GB, or less, of RAM.
-
-Processes can require significantly more memory on a 64-bit architecture. If you have RAM constraints, any performance benefits that one might gain from a 64-bit operating system would be undone by having less memory available for buffers and caching.
+Webmin uses approximately 10-12 MB of memory on a 32-bit system and about 50% more on a 64-bit system. If you deploy a cloud server with less than 3 GB of RAM, a 32-bit operating system is recommended; and this is especially true if you have 1 GB, or less, of RAM. Processes can require significantly more memory on 64-bit architecture. If you have RAM constraints, any performance benefits that one might gain from a 64-bit operating system would be undone by having less memory available for buffers and caching.
 
 >#### SSH Keys
 >
