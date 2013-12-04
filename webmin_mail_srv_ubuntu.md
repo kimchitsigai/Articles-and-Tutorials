@@ -11,7 +11,7 @@ Webmin is a web-based, server configuration tool &ndash; or, control panel &ndas
 
 ## Server Specifications
 
-Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of <code>Ubuntu Server 12.04</code>.
+First, follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of <code>Ubuntu Server 12.04</code>.
 
 ### 32-bit vs. 64-bit systems
 
@@ -22,19 +22,21 @@ Webmin uses approximately 10-12 MB of memory on a 32-bit system and about 50% mo
 >For increased security, it is advisable that you:
 >
 1. Create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); **and**
-2. Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
+2. Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
 
 ### Set the Hostname and FQDN in <code>/etc/hosts</code>
 
-Follow the steps outlined in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04 or CentOS 6.4](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu_centos.md).
+Next, follow the steps outlined in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04 or CentOS 6.4](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu_centos.md).
 
 #### For low-memory systems
 
-If you deployed a cloud server with 512MB of RAM, you're best advised to add swap. *See* [How To Add Swap on Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-add-swap-on-ubuntu-12-04). Allowing Webmin to swap out infrequently used processes and data leaves more memory for active processes.
+If you deployed a cloud server with 512MB of RAM, you're best advised to add swap. *See* [How To Add Swap on Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-add-swap-on-ubuntu-12-04). Allowing Webmin to swap out infrequently-used processes, and data, leaves more memory for active processes.
 
 ## Deploy Webmin
 
-Follow the steps in [How to Install Webmin on an Ubuntu Cloud Server](https://www.digitalocean.com/community/articles/how-to-install-webmin-on-an-ubuntu-cloud-server) to deploy the Webmin control panel.
+Now, follow the steps in [How to Install Webmin on an Ubuntu Cloud Server | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-install-webmin-on-an-ubuntu-cloud-server) to deploy the Webmin control panel.
+
+One of Webmin's benefits is that it is extendable via modules. Modules make it easy to add new functionality to your server.
 
 ## Configure Postfix Module
 
@@ -48,7 +50,7 @@ In order for mail to start flowing through your new mail server, an <code>MX rec
 
 #### SPF record
 
-[How To use an SPF Record to Prevent Spoofing & Improve E-mail Reliability](https://www.digitalocean.com/community/articles/how-to-use-an-spf-record-to-prevent-spoofing-improve-e-mail-reliability)
+[How To use an SPF Record to Prevent Spoofing & Improve E-mail Reliability | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-use-an-spf-record-to-prevent-spoofing-improve-e-mail-reliability)
 
 ## Additional Resources
 
