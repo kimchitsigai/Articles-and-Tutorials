@@ -67,17 +67,55 @@ Jailkit is comprised of various pre-configured templates & configuration files t
 
 >**Note:** In some cases, the configuration files must be replicated in the `chroot` directory and edited appropriately.
 
-Jailkit's utilities are prefixed with <code>jk_</code>. **A utility that is run within a `chroot` environment is able to read its configuration only from the jailed `chroot` directory.**
+In other words, a utility that is run within a `chroot` environment is able to read its configuration only from within the jailed `chroot` directory. Jailkit's utilities are prefixed with <code>jk_</code>.
 
 	non-root_user@server:/usr/sbin/$
-	jk_addjailuser	jk_chrootlaunch	jk_cp		jk_jailuser	jk_lsh		jk_uchroot       
-	jk_check		jk_chrootsh		jk_init		jk_list		jk_socketd	jk_update
+	jk_addjailuser	jk_check	jk_chrootlaunch	jk_chrootsh		jk_cp
+	jk_init		jk_jailuser	jk_list		jk_lsh	jk_socketd	jk_update
 
 These utilities include: a launcher that can start a daemon in a jail; a `chroot` shell tool; a tool to limit binary execution; a tool to update and clean up a jail based on the changes already made on a the system at large; and more. All of Jailkit's utilities have man pages which contain more information on how to use them; and can be accessed on your server by executing:
 
 	man jailkit
 
 You may also read more about its utilities on Jailkit's website.
+
+## Setting up a `chroot` Jail Environment
+
+There needs to be a directory where the entire jail environment will be setup. Jailed users will see this directory as the root directory of the server.
+
+>You are free to choose whichever directory structure you wish, e.g. <code>/home/jail/</code>, <code>/var/chroot/</code>, <code>/jail</code>, etc.
+
+Jailkit automatically creates the root of the `chroot` jail if it does not exist.
+
+### Setup the programs to make available inside the jail
+
+By employing the <code>jk_init</code> utility, you can automate the balance of the jail-directory setup. Execute:
+
+	sudo jk_init -v -j /chroot basicshell editors extendedshell netutils ssh sftp
+
+The above command will allow the jailed user to use the programs listed.
+
+## Creating &amp; Jailing a User
+
+First, execute (obviously, substituting <code>username</code> with one of your choosing):
+
+	sudo adduser username
+
+Follow the prompts to specify a password and provide the user's information requested by the system.
+
+>**Note:** This is a normal user that is created in the actual filesystem and **_not_** inside the `chroot` jail.
+
+	sudo jk_jailuser -m -j /chroot username
+
+Next, you need to edit the new user's <code>/etc/passwd</code> file:
+
+	sudo vim /etc/passwd
+
+>Tap on the <code>i</code> key (on your keyboard), to enter the VIM text editor's "insert mode."
+
+Adapt the user's line as follows:
+
+	username:x:[UserID]:[PrimaryGroupID]::/chroot/./home/username:/usr/sbin/jk_chrootsh
 
 ## Security Considerations
 
