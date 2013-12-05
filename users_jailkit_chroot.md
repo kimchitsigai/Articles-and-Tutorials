@@ -7,24 +7,35 @@
 
 ### Introduction
 
-A `chroot` is a way of isolating applications and/or users  from other parts of your server, by putting them in (what is commonly referred to as) a jail. In other words, a `chroot` jail can be used to sectioned off a particular user from entire sections of your server's filesystem. Without a `chroot` jail, a user with even limited file permissions would still be able to navigate to top-level directories. Without `chroot`, nothing would prevent the user from navigating up to system-critical directories. Many control panels that reconfigure web servers for shared hosting will automatically create `chroot` directories for user accounts.
+Of particular interest to hosting providers, resellers, and those that manage a server for friends &amp; family, the `chroot` (short for "change root directory") process provides a way of isolating users from other parts of your server &ndash; by putting them in (what is commonly referred to as) a jail. In other words, a `chroot` jail can be used to section off, or isolate, a particular user from entire sections of your server's filesystem. Without a `chroot` jail, nothing would prevent a user with even limited file permissions from being able to navigate up to system-critical, top-level directories.
 
-To create a jail, you simply create a folder that has a replication of the directory structure of a normal Linux box. The difference is that you only copy, in that `chroot` directory, the bare minimum of what you need. This process can be carried out manually or you can automate the process with Jailkit. 
+### An Added Layer of Protection
+
+Many control panels that reconfigure web servers for shared hosting will automatically create `chroot` directories for user accounts. Even if you trust your users to not intentionally attempt anything malicious, Brute-Force Attacks are an unwelcome reality in today's IT world and isolating your users' file directories provides an added layer of defense in the event that a user's system account should become compromised.
+
+To create a `chroot` jail, simply create a folder that has a replication of the directory structure of a typical Linux server. The difference is that you *only* copy, in that `chroot` directory, the bare minimum of what is needed by your user. This process can be carried out manually, with several commands or you can automate the process with Jailkit. 
 
 ## About Jailkit
 
-Jailkit is a set of utilities to limit user accounts to specific files using `chroot` and or specific commands. Setting up a `chroot` shell, a shell limited to some specific command, or a daemon inside a `chroot` jail is a lot easier and can be automated using these utilities and can be used to secure cvs, sftp, shell or daemon processes.
+Jailkit is a set of utilities that can be used to setup a `chroot`-based, restricted environment where users have limited access to the server's filesystem and the commands they run. The Jailkit utilities also make it easy to setup a restricted shell or to run services or programs inside such a restricted environment.
 
->Project website:<br/>
+>Project website:  
 >[http://olivier.sessink.nl/jailkit/](http://olivier.sessink.nl/jailkit/)
 
 ## Prerequisite
 
-	sudo apt-get -y install build-essential
+* This article assumes that you have completed the steps outlined in [Initial Server Setup with Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04).
+	>#### SSH Keys
+	>For increased security, it is advisable that you:  
+	>1. Use SSH keys for system logins. *See* [How To Set Up SSH Keys | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); **_and_**  
+	>2. Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
+* Jailkit needs to be compiled from source. To install the tools needed for that process, execute the following command in a terminal window:
+
+		sudo apt-get -y install build-essential
 
 ## Install Jailkit
 
-Download the latest version of the Jailkit source files and extract the archive in the <code>/tmp</code> directory, by executing the following command in a terminal window:
+Download the latest version of the Jailkit source files and extract the archive in the <code>/tmp</code> directory, by executing the following command:
 
 >**Note:** Check the Jailkit project website to ensure that you are installing the most recent release, i.e.
 >
@@ -32,7 +43,7 @@ Download the latest version of the Jailkit source files and extract the archive 
 
 	cd /tmp && sudo wget -O - "http://olivier.sessink.nl/jailkit/jailkit-2.16.tar.gz" | tar xzvf -
 
-Next,
+Next, execute:
 
 	cd jailkit-*
 
@@ -40,27 +51,32 @@ Finally, compile and install Jailkit, by executing:
 
 	./configure && make && sudo make install
 
-### Program Files
+### Program Files & Utilities
 
-By default, Jailkit installs its binaries into <code>/usr/sbin/</code> and its configuration and template files into <code>/etc/jailkit/</code>. Note that in some cases, the configuration files must be replicated into the <code>[chroot]/etc/jailkit</code> directory and edited appropriately. A <code>jk</code> program that is run within the jail directory is able to read its configuration only from the jailed <code>[chroot]/etc/jailkit</code> directory.
+By default, Jailkit installs its utilities into <code>/usr/sbin/</code> and its configuration and template files into <code>/etc/jailkit/</code>.
 
-## Available Jailkit Sets
+>**Note:** In some cases, the configuration files must be replicated into the `chroot` directory and edited appropriately. Additionally, Jailkit's utilities are prefixed with <code>jk_</code>. A utility that is run within the jail directory is able to read its configuration only from the jailed `chroot` directory.
 
-Jailkit is comprised of various pre-configured templates & configuration files that you can mix-and-match, to build the perfect `chroot` jail. If none of the existing jail-sets meets your needs you can customize them or create new ones.
+All of Jailkit's utilities have man pages which contain more information about how to use them. You may also read more about them on Jailkit's website.
+
+## Available Jailkit Utilities
+
+Jailkit is comprised of various pre-configured templates & configuration files that you can mix-and-match, to build the perfect `chroot` jail. If none of the existing Jailkit utilities meets your needs, you can customize them or create new ones.
+
+	user@server:/usr/sbin/$
+	jk_addjailuser	jk_chrootlaunch	jk_cp		jk_jailuser	jk_lsh		jk_uchroot       
+	jk_check		jk_chrootsh		jk_init		jk_list		jk_socketd	jk_update
 
 ## Create the Basic `chroot` Environment
 
 ## Conclusion
 
-As you can see setting the ssh `chroot` jail is a fairly simple process. If a user does not have its home user directory available in a `chroot` jail after login s/he will end up in /. You can create and further configure your `chroot` by creating a user home directory, defining bash environment, etc.
-
-`Chroot` is very useful for basic preventative security, but it is not designed to prevent deliberate attempts to gain root access and attack a server. For that there are other security measures you can take. Nevertheless, `chroot` helps tremendously to at least make it more difficult to exploit your dedicated server.
+As you can see, creating and administering `chroot` jails is reduced to a fairly simple process with Jailkit. While `chroot` is very useful for basic, preventative security, it is not designed to prevent deliberate attempts to gain root access for purposes of attacking a server. For that threat, there are other security measures you can employ. Nevertheless, `chroot` helps, tremendously, to at least make it more difficult to exploit your virtual private server.
 
 ## Additional Resources
 
 * Jailkit-users [mailing list](https://lists.nongnu.org/mailman/listinfo/jailkit-users)
 * [How To Use Filezilla to Transfer & Manage Files Securely on your VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-use-filezilla-to-transfer-and-manage-files-securely-on-your-vps)
-* [How To Create SSH Keys with PuTTY to Connect to a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps) (which also outlines the steps required to establish password-less logins)
 
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
