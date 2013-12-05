@@ -7,129 +7,60 @@
 
 ### Introduction
 
-A chroot is a way of isolating applications and/or users  from other parts of your server, by putting them in (what is commonly referred to as) a jail. In other words, a chroot jail can be used to sectioned off a particular user from entire sections of your server's filesystem. Without a chroot jail, a user with even limited file permissions would still be able to navigate to top-level directories. Without chroot, nothing would prevent the user from navigating up to system-critical directories. Many control panels that reconfigure web servers for shared hosting will automatically create chroot directories for user accounts.
+A `chroot` is a way of isolating applications and/or users  from other parts of your server, by putting them in (what is commonly referred to as) a jail. In other words, a `chroot` jail can be used to sectioned off a particular user from entire sections of your server's filesystem. Without a `chroot` jail, a user with even limited file permissions would still be able to navigate to top-level directories. Without `chroot`, nothing would prevent the user from navigating up to system-critical directories. Many control panels that reconfigure web servers for shared hosting will automatically create `chroot` directories for user accounts.
 
-## Create Basic chroot Environment
+To create a jail, you simply create a folder that has a replication of the directory structure of a normal Linux box. The difference is that you only copy, in that `chroot` directory, the bare minimum of what you need. This process can be carried out manually or you can automate the process with Jailkit. 
 
-To create a jail, you simply create a folder that has a replication of the directory structure of a normal Linux box. The difference is that you only copy, in that chroot directory, the bare minimum of what you need. 
+## About Jailkit
 
-	sudo mkdir /var/chroot
+Jailkit is a set of utilities to limit user accounts to specific files using `chroot` and or specific commands. Setting up a `chroot` shell, a shell limited to some specific command, or a daemon inside a `chroot` jail is a lot easier and can be automated using these utilities and can be used to secure cvs, sftp, shell or daemon processes.
 
-Next, copy the bash binary and its all shared library dependencies.
+>Project website:<br/>
+>[http://olivier.sessink.nl/jailkit/](http://olivier.sessink.nl/jailkit/)
 
-	ldd /bin/bash
-        linux-vdso.so.1 =>  (0x00007fff9a373000)
-        libtinfo.so.5 => /lib/x86_64-linux-gnu/libtinfo.so.5 (0x00007f24d57af000)
-        libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f24d55ab000)
-        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f24d51eb000)
-        /lib64/ld-linux-x86-64.so.2 (0x00007f24d59f8000)
+## Prerequisite
 
-Now, we need to manually create all necessary directories and copy <code>/bin/bash</code> and all libraries to the new chroot directory into an appropriate location:
+	sudo apt-get -y install build-essential
 
-	sudo cd /var/chroot/
-	sudo mkdir bin/ lib64/ lib/
-	sudo cp /lib/x86_64-linux-gnu/libtinfo.so.5 lib/
-	sudo cp /lib/x86_64-linux-gnu/libdl.so.2 lib/
-	sudo cp /lib/x86_64-linux-gnu/libc.so.6 lib/
-	sudo cp /lib64/ld-linux-x86-64.so.2 lib64/
-	sudo cp /bin/bash bin/
+## Install Jailkit
 
-At this point all is ready and we can chroot:
+Download the latest version of the Jailkit source files and extract the archive in the <code>/tmp</code> directory, by executing the following command in a terminal window:
 
-	sudo chroot /vat/chroot
+>**Note:** Check the Jailkit project website to ensure that you are installing the most recent release, i.e.
+>
+>		http://olivier.sessink.nl/jailkit/jailkit-<VERSION>.tar.gz
 
-Next, create a script:
+	cd /tmp && sudo wget -O - "http://olivier.sessink.nl/jailkit/jailkit-2.16.tar.gz" | tar xzvf -
 
-	sudo vim ~/chroot-setup.sh
+Next,
 
-Then, tap on the <code>i</code> key (on your keyboard) and copy & paste the following content:
+	cd jailkit-*
 
-	#!/bin/bash
-	# This script can be used to create a simple chroot environment
-	# Written by LinuxCareer.com <http://linuxcareer.com/>
-	# (c) 2013 LinuxCareer under GNU GPL v3.0+
-	
-	CHROOT='/var/chroot'
-	mkdir $CHROOT
-	
-	for i in $( ldd $* | grep -v dynamic | cut -d " " -f 3 | sed 's/://' | sort | uniq )
-	  do
-	    cp --parents $i $CHROOT
-	  done
-	
-	# ARCH amd64
-	if [ -f /lib64/ld-linux-x86-64.so.2 ]; then
-	   cp --parents /lib64/ld-linux-x86-64.so.2 /$CHROOT
-	fi
-	
-	# ARCH i386
-	if [ -f  /lib/ld-linux.so.2 ]; then
-	   cp --parents /lib/ld-linux.so.2 /$CHROOT
-	fi
-	
-	echo "Chroot jail is ready. To access it execute: chroot $CHROOT"
+Finally, compile and install Jailkit, by executing:
 
->**Note:** By default, the above script will create chroot in <code>/var/chroot</code> as defined by the <code>$CHROOT</code> variable. Feel free to change this variable according to your needs.
+	./configure && make && sudo make install
 
-Now, make the script executable:
+### Program Files
 
-	sudo chmod +x ~/chroot-setup.sh
+By default, Jailkit installs its binaries into <code>/usr/sbin/</code> and its configuration and template files into <code>/etc/jailkit/</code>. Note that in some cases, the configuration files must be replicated into the <code>[chroot]/etc/jailkit</code> directory and edited appropriately. A <code>jk</code> program that is run within the jail directory is able to read its configuration only from the jailed <code>[chroot]/etc/jailkit</code> directory.
 
-and run it with the file full path to your executables and files you wish to include. For example, if you need: ls, cat, echo, rm, bash, vi then use the which command to get a full path and supply it as an argument to the above chroot.sh script:
+## Available Jailkit Sets
 
-	sudo ./chroot-setup.sh /bin/{ls,cat,echo,rm,bash} /usr/bin/vi /etc/hosts
-	Chroot jail is ready. To access it execute: chroot /var/chroot
+Jailkit is comprised of various pre-configured templates & configuration files that you can mix-and-match, to build the perfect `chroot` jail. If none of the existing jail-sets meets your needs you can customize them or create new ones.
 
-Now, you can access your new chroot jail with:
-
-	chroot /var/chroot
-	bash-4.2# echo linuxcareer.com > file
-	bash-4.2# cat file
-	linuxcareer.com
-	bash-4.2# rm file
-	bash-4.2# vi --version
-	VIM - Vi IMproved 7.3 (2010 Aug 15, compiled May  4 2012 04:25:35)
-
-## Create chroot User Group
-
-A this point, we need to create a separate usergourp, which will be used by sshd to redirect all users belonging to this usergroup to the chroot jail.
-
-	sudo groupadd chrootjail
-
-Now, add existing users to this group, if any:
-
-	sudo adduser tester chrootjail
-	Adding user `tester' to group `chrootjail' ...
-	Adding user tester to group chrootjail
-	Done.
-
-## Configure sshd for chroot Jail
-
-All what remains is to configure sshd to automaticaly redirect all users from the chrootjail usergroup to the chroot jail at /var/chroot. This can be easily done be editing the sshd configuration file /etc/ssh/sshd_config. Add the following to /etc/ssh/sshd_config:
-
-	Match group chrootjail
-            ChrootDirectory /var/chroot/
-
-Restart ssh:
-
-	sudo service ssh restart
-
-## Login to chroot Jail via SSH
-
-At this point you can test your settings by log in to you server with configured sshd:
-
-	ssh tester@Your_droplet's_IP
+## Create the Basic `chroot` Environment
 
 ## Conclusion
 
-As you can see setting the ssh chroot jail is a fairly simple process. If a user does not have its home user directory available in a chroot jail after login s/he will end up in /. You can create and further configure your chroot by creating a user home directory, defining bash environment, etc.
+As you can see setting the ssh `chroot` jail is a fairly simple process. If a user does not have its home user directory available in a `chroot` jail after login s/he will end up in /. You can create and further configure your `chroot` by creating a user home directory, defining bash environment, etc.
 
-Chroot is very useful for basic preventative security, but it is not designed to prevent deliberate attempts to gain root access and attack a server. For that there are other security measures you can take. Nevertheless, chroot helps tremendously to at least make it more difficult to exploit your dedicated server.
+`Chroot` is very useful for basic preventative security, but it is not designed to prevent deliberate attempts to gain root access and attack a server. For that there are other security measures you can take. Nevertheless, `chroot` helps tremendously to at least make it more difficult to exploit your dedicated server.
 
 ## Additional Resources
 
-* [BasicChroot | Ubuntu Docs](https://help.ubuntu.com/community/BasicChroot)
+* Jailkit-users [mailing list](https://lists.nongnu.org/mailman/listinfo/jailkit-users)
 * [How To Use Filezilla to Transfer & Manage Files Securely on your VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-use-filezilla-to-transfer-and-manage-files-securely-on-your-vps)
+* [How To Create SSH Keys with PuTTY to Connect to a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps) (which also outlines the steps required to establish password-less logins)
 
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
