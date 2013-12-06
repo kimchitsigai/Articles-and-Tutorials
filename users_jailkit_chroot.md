@@ -81,29 +81,56 @@ Create a jail using the <code>jk\_init</code> utility and specify the jail's loc
 
 	sudo jk_init -v -j /chroot basicshell editors extendedshell jk_lsh netutils ssh sftp
 
-The above command will allow the jailed user(s) to use the programs listed.
+**Note:** While the above command makes the listed programs **available** inside the `chroot` jail, it is still necessary to authorize access to specific programs for individual jailed-users.
 
 #### The `jk_lsh` utility
 
-provides a special shell that limits the binaries it will execute to those that have been explicitly allowed. All other commands or regular shell access are denied. That way, even if a user uploads their own binary file, the user will **not** be able to execute it.
+provides a special, non-interactive shell that limits the binaries it will execute to those that have been explicitly allowed. All other commands or regular (such as the bash) shell access are denied. That way, even if a user uploads their own binary file, the user will **not** be able to execute it.
 
 This can be used to restrict an account to a specific use. For example, <code>jk\_lsh</code> can be used to make rsync-, cvs-, sftp- or scp-only accounts. Allowed actions are read from <code>/etc/jailkit/jk\_lsh.ini</code>. If you run <code>jk\_lsh</code> inside a `chroot` jail, make sure <code>jk_lsh.ini</code> is copied into that `chroot` jail, i.e. <code>/path/to/jail/etc/jailkit/jk\_lsh.ini</code>.
 
 ## Creating &amp; Jailing a User
 
-First, execute (obviously, substituting <code>username</code> with one of your choosing):
+First, execute (substituting <code>username</code> with one of your choosing):
 
 	sudo adduser username
 
 Follow the prompts to specify a password and provide the user's information requested by the system.
 
-**Note:** This is a normal user that is created in the actual filesystem and  is **_not_** inside the `chroot` jail.
+**Note:** This is a normal user that is created in the actual filesystem and  is **_not_** inside the `chroot` jail, yet.
 
 #### Jail the user
 
-To put the user inside the `chroot` jail, execute:
+If you want your jailed-user to have access to the bash shell (for example, to be able to SSH into your server), execute:
 
-	sudo jk_jailuser -m -j /chroot username
+	sudo jk_jailuser -m -s /bin/bash -j /chroot username
+
+Then, copy bash and its libraries into the `chroot` jail using the <code>jk_cp</code> utility:
+
+	sudo jk_cp -v -f /chroot /bin/bash
+
+Finally, edit the SSH configuration file:
+
+	sudo vim /etc/ssh/sshd_config
+
+>Then, tap on the <code>i</code> key (on your keyboard) to enter the Vim text editor's "insert mode."
+
+and add the jailed user to the following directive:
+
+	[...]
+	AllowUsers your_username new_username
+
+>To save your edit, and exit, tap on the following keys: <code>Esc</code>,<code>:</code>, <code>w</code>, <code>q</code>, <code>Enter</code>.
+
+Reload SSH to incorporate the new setting:
+
+	sudo reload ssh
+
+>**Option 2:** To put the user inside the `chroot` jail with maximum restrictions (that is, with no interactive-shell access), execute:
+
+>		sudo jk_jailuser -m -j /chroot username
+
+#### Confirm the transfer of the system user account into the `chroot` jail
 
 To confirm that the user was jailed, check the user's <code>/etc/passwd</code> file, by executing:
 
@@ -116,7 +143,7 @@ Review the line that pertains to the newly-jailed user and inspect the last two 
 
 		username:x:[UserID]:[PrimaryGroupID]:[Full Name],,,:/path/to/jail/./home/username:/usr/sbin/jk_chrootsh
 
-In addition to the modifications to the jailed-user's <code>/etc/passwd</code> file, the <code>jk_jailuser</code> utility also adds the user to a stripped-down <code>passwd</code> file located at <code>/path/to/jail/etc/passwd</code> and adds the user's group(s) to a stripped down group file located at <code>/path/to/jail/etc/group</code>.
+In addition to the modifications to the jailed-user's <code>/etc/passwd</code> file, the <code>jk_jailuser</code> utility also adds the user to a stripped-down <code>passwd</code> file located at <code>/path/to/jail/etc/passwd</code> and adds the user's group(s) to a stripped-down group file located at <code>/path/to/jail/etc/group</code>.
 
 #### Provide privileges to the jailed-user
 
@@ -124,39 +151,7 @@ While, at this point, you have created a valid `chroot` jail, the jail is curren
 
 #### Allow bash in the `chroot` jail
 
-Copy bash and its libraries into the `chroot` jail using the <code>jk_cp</code> utility:
 
-	sudo jk_cp -v -f /chroot /bin/bash
-
-Now, execute:
-
-	sudo vim /chroot/etc/passwd
-
-#### Notice that it is the <code>passwd</code> file *inside* the `chroot` jail that requires modification.
-
->Then, tap on the <code>i</code> key (on your keyboard) to enter the Vim text editor's "insert mode."
-
-Next, replace <code>/usr/sbin/jk_lsh</code> with <code>/bin/bash</code>, similar to:
-
-	username:x:[UserID]:[PrimaryGroupID]:[Full Name],,,:/home/username:/bin/bash
-
->To save your modification, and exit, tap on the following keys: <code>Esc</code>,<code>:</code>, <code>w</code>, <code>q</code>, <code>Enter</code>.
-
-#### Allow jailed-user to use SSH
-
-To allow a jailed-user to use SSH, you have to allow it, by executing:
-
-	sudo vim /chroot/etc/jailkit/jk_lsh.ini
-
->Then, tap on the <code>i</code> key (on your keyboard) to enter the Vim text editor's "insert mode."
-
-Next, append the following to the end of the file:
-
-	[username]
-	paths= /usr/bin
-	executables= /usr/bin/ssh
-
->To save your modification, and exit, tap on the following keys: <code>Esc</code>,<code>:</code>, <code>w</code>, <code>q</code>, <code>Enter</code>.
 
 **It is important to note that a `chroot` jail can be easily escaped if the user is able to elevate to the root level.** Thus, it is very important to prevent the user from doing so.
 
