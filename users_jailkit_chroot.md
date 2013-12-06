@@ -10,11 +10,7 @@ Of particular interest to hosting providers, resellers, and those that manage a 
 
 ## The Basic `chroot` Environment
 
-A `chroot` jail is a directory tree that you create within your filesystem, where the user cannot see any directories or files that are outside the `chroot` jail directory. The user is said to be "jailed" in that directory and its subdirectories. If you want a user to be able to do just one task, you can set up a `chroot` jail so that the user is able to only do that one task.
-
->For example, if you want a user to be able to run SCP, install a copy of SCP in a `chroot` jail along with just enough support to execute the program (e.g., using a limited shell).
-
-The fewer executables you have in a `chroot` jail (and the more their capabilities are limited, such as using strict configurations), the more work a hacker, or malicious worm, needs to break out of it.
+A `chroot` jail is a directory tree that you create within your filesystem, where the user cannot see any directories or files that are outside the `chroot` jail directories. The user is said to be "jailed" in that directory and its subdirectories. If you want a user to be able to do just one task, you can set up a `chroot` jail so that the user is able to only do that one task. For example, if you want a user whose only privilege on your server is to be able to run SFTP, install a copy of SFTP in a `chroot` jail along with just enough support to execute the program. The fewer executables you have in a `chroot` jail (and the more their capabilities are limited with strict configurations), the more work a hacker, or malicious worm, needs to break out of the `chroot` jail to move on to your filesystem at large.
 
 Many control panels that reconfigure web servers for shared hosting will automatically create `chroot` directories for user accounts. Even if you trust your users to not intentionally attempt anything malicious, Brute-Force Attacks are an unwelcome reality in today's IT world and isolating your users' file directories provides an added layer of defense in the event that a user's system account should become compromised.
 
@@ -57,15 +53,13 @@ Finally, compile and install Jailkit, by executing:
 
 Jailkit is comprised of various pre-configured scripts, templates and configuration files that you can mix-and-match, to build the perfect `chroot` jail. If none of the existing Jailkit utilities meet your needs, you can customize them or create new ones. By default, Jailkit installs its utilities in <code>/usr/sbin/</code> and its configuration and template files in <code>/etc/jailkit/</code>.
 
-**Note:** In some cases, the configuration files must be replicated in the `chroot` directory and edited appropriately.
-
-In other words, a utility that is run within a `chroot` environment is able to read its configuration only from within the jailed `chroot` directory. Jailkit's utilities are prefixed with <code>jk_</code>.
+**Note:** In some cases, the configuration files must be replicated in the `chroot` directory and edited appropriately, because a Jailkit utility that is run within a `chroot` environment is able to read its configuration only from within the jailed `chroot` directory. Jailkit's utilities are prefixed with <code>jk_</code>.
 
 	non-root_user@server:/usr/sbin/$
-	jk_addjailuser	jk_check	jk_chrootlaunch	jk_chrootsh		jk_cp
-	jk_init		jk_jailuser	jk_list		jk_lsh	jk_socketd	jk_update
+	[...]	jk_addjailuser	jk_chec	jk_chrootlaunch	jk_chrootsh	jk_cp
+	jk_init	jk_jailuser	jk_list	jk_lsh	jk_socketd	jk_update	[...]
 
-These utilities include a launcher that can start a daemon in a jail; a `chroot` shell tool; a tool to limit binary execution; a tool to update and clean up a jail based on changes already made on a the system at large; and more. All of Jailkit's utilities have <code>man</code> pages which contain more information on how to use them; and can be accessed on your server by executing:
+These utilities include a launcher that can start a daemon in a jail; a `chroot` shell tool; a tool to limit binary execution; a tool to update and clean up a jail based on changes already made on a the system at large; and more. All of Jailkit's utilities have <code>man</code> pages which contain more information on how to use them; and can be accessed from any directory on your server by executing:
 
 	man jailkit
 
@@ -77,17 +71,11 @@ There needs to be a directory where the entire jail environment will be setup. J
 
 #### The `jk_init` utility
 
-Create a jail using the <code>jk\_init</code> utility and specify the jail's location and what jailed-programs you want included in the jail; and Jailkit will automatically create, and assign the appropriate permissions to, the root of the `chroot` jail if it does not already exist. By employing the <code>jk_init</code> utility, you can automate the jail-directory, and jailed-program, setup. To do so, execute (feel free to substitute <code>/chroot</code> with a directory of your choice):
+With Jailkit's <code>jk\_init</code> utility, you can automate the process of creating a `chroot` jail, while retaining the ability of specifying the jail's location and what jailed-programs you want included in the jail. For example, execute:
+
+>Feel free to substitute <code>/chroot</code> with a directory of your choice.
 
 	sudo jk_init -v -j /chroot basicshell editors extendedshell jk_lsh netutils ssh sftp
-
-**Note:** While the above command makes the listed programs **available** inside the `chroot` jail, it is still necessary to authorize access to specific programs for individual jailed-users.
-
-#### The `jk_lsh` utility
-
-provides a special, non-interactive shell that limits the binaries it will execute to those that have been explicitly allowed. All other commands or regular (such as the bash) shell access are denied. That way, even if a user uploads their own binary file, the user will **not** be able to execute it.
-
-This can be used to restrict an account to a specific use. For example, <code>jk\_lsh</code> can be used to make rsync-, cvs-, sftp- or scp-only accounts. Allowed actions are read from <code>/etc/jailkit/jk\_lsh.ini</code>. If you run <code>jk\_lsh</code> inside a `chroot` jail, make sure <code>jk_lsh.ini</code> is copied into that `chroot` jail, i.e. <code>/path/to/jail/etc/jailkit/jk\_lsh.ini</code>.
 
 ## Creating &amp; Jailing a User
 
@@ -97,11 +85,11 @@ First, execute (substituting <code>username</code> with one of your choosing):
 
 Follow the prompts to specify a password and provide the user's information requested by the system.
 
-**Note:** This is a normal user that is created in the actual filesystem and  is **_not_** inside the `chroot` jail, yet.
+**Note:** This is a normal user that is created and  is **_not_** inside the `chroot` jail, yet.
 
 #### Jail the user
 
-If you want your jailed-user to have access to the bash shell (for example, to be able to SSH into your server), execute:
+The <code>jk_jailuser</code> utility is a tool to move an existing user account &ndash; the user's entire home directory and subdirectories &ndash; into a `chroot` jail. 
 
 	sudo jk_jailuser -m -s /bin/bash -j /chroot username
 
@@ -109,7 +97,7 @@ Then, copy bash and its libraries into the `chroot` jail using the <code>jk_cp</
 
 	sudo jk_cp -v -f /chroot /bin/bash
 
-Finally, edit the SSH configuration file:
+Finally, edit the SSH configuration file to allow access for the additional user:
 
 	sudo vim /etc/ssh/sshd_config
 
@@ -120,15 +108,11 @@ and add the jailed user to the following directive:
 	[...]
 	AllowUsers your_username new_username
 
->To save your edit, and exit, tap on the following keys: <code>Esc</code>,<code>:</code>, <code>w</code>, <code>q</code>, <code>Enter</code>.
+>To save your edit, and exit, tap the following keys: <code>Esc</code>,<code>:</code>, <code>w</code>, <code>q</code>, <code>Enter</code>.
 
-Reload SSH to incorporate the new setting:
+Reload SSH to incorporate the modified setting:
 
 	sudo reload ssh
-
->**Option 2:** To put the user inside the `chroot` jail with maximum restrictions (that is, with no interactive-shell access), execute:
-
->		sudo jk_jailuser -m -j /chroot username
 
 #### Confirm the transfer of the system user account into the `chroot` jail
 
@@ -148,10 +132,6 @@ In addition to the modifications to the jailed-user's <code>/etc/passwd</code> f
 #### Provide privileges to the jailed-user
 
 While, at this point, you have created a valid `chroot` jail, the jail is currently locked-down to the point of being unusable; because privileges have been stripped-down by the <code>jk_lsh</code> utility so much that your newly-jailed user is not allowed to login to a bash shell.
-
-#### Allow bash in the `chroot` jail
-
-
 
 **It is important to note that a `chroot` jail can be easily escaped if the user is able to elevate to the root level.** Thus, it is very important to prevent the user from doing so.
 
