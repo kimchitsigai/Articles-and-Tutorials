@@ -82,7 +82,7 @@ With Jailkit's <code>jk\_init</code> utility, you can automate the process of cr
 
 ## Creating &amp; Jailing a User
 
-*Skip down to the **Jail the user** section to add existing users to a `chroot` jail.*
+_Skip down to the **Jail the user** section to add existing users to a `chroot` jail._
 
 To create a new user, execute (substituting <code>username</code> with one of your choosing):
 
@@ -173,4 +173,4 @@ As you can see, creating and administering `chroot` jails is reduced to a much s
 
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
-<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; DATE</div></p>
+<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; December 6, 2013</div></p>
