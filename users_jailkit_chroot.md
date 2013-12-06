@@ -152,15 +152,14 @@ Refer to the Jailkit [website](http://olivier.sessink.nl/jailkit/jk_update.8.htm
 
 ## Security Considerations
 
->A badly configured jail is a security risk! -The Jailkit Team.
+The Jailkit Team:
+>A badly configured jail is a security risk!
 
-**It is important to note that a `chroot` jail can be easily escaped if the user is able to elevate to the root level of the main filesystem.** Thus, it is very important to prevent the user from doing so.
+The server's super user (i.e., root), or any process running with root privileges, can always break out of a jail.
 
-#### No directory inside a `chroot` jail, except for a user's home or <code>/tmp</code>, directories should be writable by the user. Otherwise, the user can bypass security checks and gain root privileges.
+#### No directory inside a `chroot` jail, except for a jailed-user's home or <code>/tmp</code>, directories should be writable by the jailed-user. Otherwise, a jailed-user can bypass security checks and gain root privileges.
 
-The root of the `chroot` jail, especially, should **not be writable** by the user. Other Jailkit utilities, not discussed in this article, can be used to perform some basic checks to verify that a jail is secure and abort if a jail is not secure. Check your log files if things do not work as expected.
-
-The server's super user (i.e., root), or any process running with root privileges, can always break out of a jail. It is, therefore, important that the processes inside a `chroot` jail do not have root privileges, nor have the means to receive those privileges. **Avoid setuid (+s) executables inside the jail.** If the jail is on a separate filesystem, the jail filesystem can mounted with the <code>nosuid</code> flag.
+Refer to the Jailkit website for other security best practices and Jailkit utilities, not discussed in this article, e.g., [jk_check](http://olivier.sessink.nl/jailkit/jk_check.8.html) that can be used to perform some basic checks to verify that a `chroot` jail is secure.
 
 ## Conclusion
 
