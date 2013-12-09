@@ -1,4 +1,4 @@
-# ~~~ WIP ~~~ DRAFT ~~~ WIP ~~~
+# ~~~ WIP ~ DRAFT ~ WIP ~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted*
 
 Share your Calendars, Address Books &amp; Mail with SOGo Groupware Server on Ubuntu 12.04
@@ -113,7 +113,8 @@ Next, execute (replacing `LDAPpassword`):
 
 Append the SOGo repository to your `apt source list`, by copying &amp; pasting both lines, below, into the command line and pressing `Enter`:
 
-    echo "deb http://inverse.ca/ubuntu precise precise \n deb-src http://inverse.ca/ubuntu precise precise" | sudo tee /etc/apt/sources.list.d/SOGo.list
+    echo -e "deb http://inverse.ca/ubuntu precise precise \n\
+	deb-src http://inverse.ca/ubuntu precise precise" | sudo tee /etc/apt/sources.list.d/SOGo.list
 
 Next, you must add SOGo's GPG public key to Ubuntu's `apt keyring`. To do so, execute the following commands:
 
@@ -289,11 +290,11 @@ Any server accessible from the public Internet should be security hardened, and 
 			sudo ufw enable
 			sudo ufw status verbose
 
-* Either [disable password logins](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps) or deploy [Fail2ban](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04) &amp; [DenyHosts](https://www.digitalocean.com/community/articles/how-to-install-denyhosts-on-ubuntu-12-04).
+* Either [disable password logins](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps) or deploy [Fail2ban](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04).
 
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
-<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; DATE, 2013</div></p>
+<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; DATE</div></p>
 
-# ~~~~ WIP ~~~~ DRAFT ~~~~ WIP ~~~~
+# ~~~ WIP ~ DRAFT ~ WIP ~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted*
