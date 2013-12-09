@@ -1,9 +1,8 @@
-~~~ WIP ~~~
-===
-
+#### ~~~ WIP ~~~
 *Pull Requests gladly accepted*
 
-## How to Create Isolated File Directories For SFTP users with OpenSSH on Ubuntu 12.04
+How to Isolate File Directories for SFTP Users with OpenSSH on Ubuntu 12.04
+=
 
 ### Introduction
 
