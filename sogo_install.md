@@ -111,10 +111,9 @@ Next, execute (replacing `LDAPpassword`):
 
 ### Add SOGo Repository & GPG Public Key
 
-Append the SOGo repository to your `apt source list`, by copying & pasting both lines, below, into the command line and pressing `Enter`:
+Append the SOGo repository to your `apt source list`, by copying &amp; pasting both lines, below, into the command line and pressing `Enter`:
 
-    echo -e "deb http://inverse.ca/ubuntu-nightly precise precise\n\
-	deb-src http://inverse.ca/ubuntu-nightly precise precise" > /etc/apt/sources.list.d/SOGo.list
+    echo "deb http://inverse.ca/ubuntu-nightly precise precise \n deb-src http://inverse.ca/ubuntu-nightly precise precise" | sudo tee /etc/apt/sources.list.d/SOGo.list
 
 Next, you must add SOGo's GPG public key to Ubuntu's `apt keyring`. To do so, execute the following commands:
 
