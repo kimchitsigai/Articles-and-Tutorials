@@ -6,30 +6,30 @@ Share your Calendars, Address Books &amp; Mail with SOGo Groupware Server on Ubu
 
 ### Introduction
 
-SOGo is an open source, modern, scalable groupware server. It offers shared calendars, address books, and emails through your favorite Web browser and by using a native client such as Mozilla Thunderbird and Lightning.
-
-## SOGo Features
-
-* Scalable architecture suitable for deployments from dozens to many thousands of users
-* Rich web-based interface that shares the look and feel, the features and the data of Mozilla 
-Thunderbird and Lightning
-* Improved integration with Mozilla Thunderbird and Lightning by using the SOGo Connector and the SOGo Integrator
-* Two-way synchronization support with any SyncML-capable devices (BlackBerry, Palm, Windows CE, etc.) by using the Funambol SOGo Connector
-
-SOGo is standard-compliant. It supports CalDAV, CardDAV, GroupDAV, iMIP and iTIP and reuses existing IMAP, SMTP and database servers &ndash; making the solution easy to deploy and interoperable with many applications. Mobile devices supporting the SyncML standard use the Funambol middleware to synchronize information.
+SOGo is an open-source, modern, scalable groupware server. It offers shared calendars, address books, and emails through your favorite web browser, desktop client, and mobile device.
 
 ## Requirements
 
-SOGo reuses many components in an infrastructure:
+SOGo is **not** an all-in-one solution like Microsoft Exchange (this is a good thing!). Instead, SOGo reuses many components in an infrastructure, particularly:
 
-* LDAP server (e.g. OpenLDAP);
-* Database server (e.g. MySQL or PostgreSQL);
 * SMTP server (e.g. Postfix);
-* IMAP server (e.g. Cyrus or Dovecot).
+* IMAP server (e.g. Cyrus or Dovecot);
+* Database server (e.g. MySQL or PostgreSQL);
+
+#### User Authentication
+
+SOGo places an emphasis on scalability. Thus, several user-authentication methods are supported, whether:
+
+* You are hosting a groupware server for a small workgroup and want to use your server's system accounts; or
+* Work in a medium-sized workgroup that utilize a local database for user-athentication; or
+* A large organization that utilizes OpenLDAP; or
+* Need an enterprise solution that incorporates an open-source iteration of Active Directory, such as Samba4 or FreeIPA.
+
+SOGo will literally transform these loosely-coupled components into a single, integrated groupware solution, which can be accessed from (i) your favorite web browser; (ii) a variety of desktop clients; and (iii) mobile devices.
 
 ## Prerequisites
 
-Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of an `Ubuntu 12.04 64-bit` virtual private server (VPS).
+Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of an `Ubuntu 12.04 server`.
 
 >#### SSH Keys
 >
@@ -38,76 +38,17 @@ Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virt
 1. Create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); **and**
 2. Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
 
-#### Hostname & FQDN
+### Hostname & FQDN
 
 Set your server's hostname and Fully Qualified Domain Name by implementing the steps in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04 or CentOS 6.4](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu_centos.md).
 
-#### Timezone
+### Timezone
 
 You can change your server's timezone to whatever you want; altough it may be best to set it to the same timezone of most of your users. To do so, simply execute, in a terminal:
 
     sudo dpkg-reconfigure tzdata
 
 and follow the instructions in the ensuing on-screen prompts.
-
-## Install LDAP Server
-
-OpenLDAP is used by many to manage groups and users. While SOGo can function perfectly without an LDAP server, it is not practical to do so in environments with more than a handful of users. Thus, if you hope to use SOGo for more than family and a few friend, follow the steps outlined in [How To Install and Configure a Basic LDAP Server on an Ubuntu 12.04 VPS](https://www.digitalocean.com/community/articles/how-to-install-and-configure-a-basic-ldap-server-on-an-ubuntu-12-04-vps).
-
-### Configure LDAP for SOGo Integration
-
-#### Provision the Frontend
-
-Execute (obviously, you can use whichever text editor you wish; but this guide assumes that you have installed the [vim text editor](https://www.digitalocean.com/community/articles/installing-and-using-the-vim-text-editor-on-a-cloud-server)):
-
-	sudo vim frontend.yourdomain.tld.ldif
-
-Now, on your keyboard, tap on the <code>i</code> key; use the arrow keys to navigate the text area; and copy &amp; paste, or create your frontend file so that it resembles, the example below (replacing <code>yourdomain.tld</code> with the FQDN of your groupware server):
-
-	dn: ou=Users,dc=yourdomain,dc=tld
-	objectClass: organizationalUnit
-	ou: Users
-	
-	dn: ou=Groups,dc=yourdomain,dc=tld
-	objectClass: organizationalUnit
-	ou: Groups
-
-Now we add the LDIF and provision the server by executing the following command:
-
-	sudo ldapadd -x -D cn=admin,dc=yourdomain,dc=tld -W -f frontend.yourdomain.tld.ldif
-
-The system will respond with `Enter LDAP Password:`. Enter your root LDAP password (the one you set during `slapd` installation).
-
-If provisioned correctly, the system will display:
-
-	adding new entry "ou=Users,dc=yourdomain,dc=tld"
-
-	adding new entry "ou=Groups,dc=yourdomain,dc=tld"
-
-#### Create the SOGo Administrative Account
-
-First, create the SOGo administrative account in your LDAP server. The following LDIF file (sogo.ldif) can be used as an example:
-
-	dn: uid=sogo,ou=Users,dc=yourdomain,dc=tld
-	objectClass: top
-	objectClass: inetOrgPerson
-	objectClass: person
-	objectClass: organizationalPerson
-	uid: sogo
-	cn: SOGo Administrator
-	mail: sogo@yourdomain.tld
-	sn: Administrator
-	givenName: SOGo
-
-Load the LDIF file inside your LDAP server using the following command:
-
-	sudo ldapadd -f sogo.ldif -x -w qwerty -D cn=admin,dc=yourdomain,dc=tld
-
-If successful, the system will respond with `adding new entry "uid=sogo,ou=Users,dc=yourdomain,dc=tld"`.
-
-Next, execute (replacing `LDAPpassword`):
-
-	sudo ldappasswd -h localhost -x -w LDAPpassword -D cn=admin,dc=yourdomain,dc=tld uid=sogo,ou=Users,dc=yourdomain,dc=tld -s LDAPpassword 
 
 ### Add SOGo Repository & GPG Public Key
 
