@@ -1,4 +1,4 @@
-# ~~~~ WIP ~~~~ DRAFT ~~~~ WIP ~~~~
+# ~~~ WIP ~~~ DRAFT ~~~ WIP ~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls) gladly accepted*
 
 Share your Calendars, Address Books &amp; Mail with SOGo Groupware Server on Ubuntu 12.04
@@ -226,7 +226,7 @@ and add the `-b` argument at lines 70 and 88:
 
 	sudo service sogo restart	
 
-## Postfix Installation
+## Postfix & Dovecot Installation
 
 Install Postfix
 
@@ -252,7 +252,7 @@ Then restart Postfix
 
 	sudo service postfix restart
 
-## Dovecot Installation
+##  Installation
 
 To install Dovecot, execute:
 
