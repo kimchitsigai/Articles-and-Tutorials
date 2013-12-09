@@ -10,7 +10,7 @@ SOGo is an open-source, modern, scalable groupware server. It offers shared cale
 
 ## Requirements
 
-SOGo is **not** an all-in-one solution like Microsoft Exchange (this is a good thing!). Instead, SOGo reuses many components in an infrastructure, particularly:
+SOGo is **not** an all-in-one solution like Microsoft Exchange (this is a good thing!). Instead, SOGo reuses many components in an infrastructure; particularly, the:
 
 * SMTP server (e.g. Postfix);
 * IMAP server (e.g. Cyrus or Dovecot);
@@ -25,18 +25,20 @@ SOGo places an emphasis on scalability. Thus, several user-authentication method
 * A large organization that utilizes OpenLDAP; or
 * Need an enterprise solution that incorporates an open-source iteration of Active Directory, such as Samba4 or FreeIPA.
 
-SOGo will literally transform these loosely-coupled components into a single, integrated groupware solution, which can be accessed from (i) your favorite web browser; (ii) a variety of desktop clients; and (iii) mobile devices.
+SOGo will literally transform these loosely-coupled components into an efficient, integrated groupware solution, which can be accessed from (i) your favorite web browser; (ii) a variety of desktop clients; and (iii) mobile devices.
 
 ## Prerequisites
 
-Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of an `Ubuntu 12.04 server`.
+1. Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of an `Ubuntu 12.04 server`.
 
->#### SSH Keys
->
->For increased security, it is advisable that you:
->
-1. Create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); **and**
-2. Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
+	>#### SSH Keys
+	>
+	>For increased security, it is advisable that you:
+	>
+	>* Create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); **and**
+	>* Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
+
+2. Follow the steps in [Initial Server Setup with Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04).
 
 ### Hostname & FQDN
 
@@ -52,7 +54,7 @@ and follow the instructions in the ensuing on-screen prompts.
 
 ### Add SOGo Repository & GPG Public Key
 
-Append the SOGo repository to your `apt source list`, by copying &amp; pasting both lines, below, into the command line and pressing `Enter`:
+Add the SOGo repository to your `apt-sources list`, by copying &amp; pasting both lines, below, into the command line and pressing `Enter`:
 
     echo -e "deb http://inverse.ca/ubuntu precise precise \n\
 	deb-src http://inverse.ca/ubuntu precise precise" | sudo tee /etc/apt/sources.list.d/SOGo.list
@@ -63,7 +65,7 @@ Next, you must add SOGo's GPG public key to Ubuntu's `apt keyring`. To do so, ex
 
 Then, update your lists of available software packages, by executing:
 
-	sudo apt-get update
+	sudo apt-get update && sudo apt-get -y upgrade
 
 ## SOGo Installation
 
@@ -169,69 +171,59 @@ and add the `-b` argument at lines 70 and 88:
 
 ## Postfix & Dovecot Installation
 
-Install Postfix
+A convenient option for installing and configuring Postfix for SMTP-AUTH is to use Ubuntu's <code>mail-stack-delivery</code> package. The mail stack provides fully operational delivery with safe defaults and additional options.
 
-	sudo apt-get -y install postfix postfix-ldap
+Out of the box, the mail stack supports IMAP, POP3 and SMTP services with SASL authentication and Maildir as default storage engine. This package will install Dovecot and configure Postfix to use it for both SASL authentication and as a Mail Delivery Agent (MDA). The package also configures Dovecot for IMAP, IMAPS, POP3, and POP3S.
 
-Let as usual the default options, then give the following parameter to Postfix to use maildir format.
+	sudo apt-get -y install mail-stack-delivery
 
-	postconf -e "home_mailbox=.Maildir/"
+## SSL Certificate
 
-Next, execute:
+If you do not own a commercial SSL Certificate, you have two options:
 
-	postconf -e "mailbox_transport = lmtp:unix:/var/run/cyrus/socket/lmtp"
+* Obtain a free certificate from StartSSL, *see* [How To Set Up Apache with a Free Signed SSL Certificate on a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-set-up-apache-with-a-free-signed-ssl-certificate-on-a-vps); or
+* Create  a self-signed certificate. *See* [How To Create a SSL Certificate on Apache for Ubuntu 12.04](https://www.digitalocean.com/community/articles/how-to-create-a-ssl-certificate-on-apache-for-ubuntu-12-04).
 
-It’s also necessary to indicate to Postfix do not use ltmp in a chroot mode as it will not able to communicate with Cyrus-Imap.
+#### SSL Directories
 
-	sudo vim /etc/postfix/master.cf
+Once you have an SSL certificate and key, execute:
 
-And change the line to add the “n” letter in the right placement like the following line.
+	sudo vim /etc/postfix/main.cf
 
-	lmtp      unix  -       -       n       -       -       lmtp
+>Then, tap on the <code>i</code> key (on your keyboard) to enter the Vim text editor's "insert mode."
 
-Then restart Postfix
+and change the following options:
 
-	sudo service postfix restart
+	smtpd_tls_cert_file = /etc/ssl/certs/mail.pem
+	smtpd_tls_key_file = /etc/ssl/private/mail.key
 
-##  Installation
+>To save your edit, and exit, tap the following keys: <code>Esc</code>,<code>:</code>, <code>w</code>, <code>q</code>, <code>Enter</code>.
 
-To install Dovecot, execute:
+Finally, restart Postfix & Dovecot:
 
-	sudo apt-get install dovecot-imapd
+	sudo service postfix restart && sudo service dovecot restart
 
-Configure Dovecot by creating a new file:
-
-	sudo vim /etc/dovecot/local.conf
-
-and paste the following text:
-
-	mail_location = maildir:~/.Maildir
-	disable_plaintext_auth = no
- 
-	passdb {
-  	driver = static
-  	args = nopassword=y host=127.0.0.1
-	}
-
-Restart Dovecot:
-
-	sudo service dovecot restart
-
-### Security Hardening
+## Security Hardening
 
 Any server accessible from the public Internet should be security hardened, and a groupware server is no exception. While security best practices are not within the scope of this article, 
 
-* Change your SSH port from the default Port 22 to a random port **below 1024**, as described in **Step Five** of [Initial Server Setup with Ubuntu 12.04](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04);
+* Change your SSH port from the default Port 22, as described in **Step Five** of [Initial Server Setup with Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04), to a random port **below 1024**;
 
 * Configure a [firewall](https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server) and make sure to open your **custom SSH port** and **TCP Ports 25 &amp; 465**;
  * The default firewall configuration tool for Ubuntu is `ufw`. To open the necessary ports, simply execute:
 
     		sudo ufw allow [custom SSH port below 1024]/tcp
-			sudo ufw allow 
+			sudo ufw allow 143/tcp
+			sudo ufw allow 587/tcp
 			sudo ufw enable
 			sudo ufw status verbose
 
 * Either [disable password logins](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps) or deploy [Fail2ban](https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04).
+
+## Additional Resources
+
+* SOGo [Installation and Configuration Guide](http://www.sogo.nu/files/docs/SOGo%20Installation%20Guide.pdf)
+* SOGo [mailing list](https://lists.inverse.ca/sogo/subscribe/users)
 
 As always, if you need help with the steps outlined in this How-To, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
