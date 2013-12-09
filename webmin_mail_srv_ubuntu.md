@@ -1,5 +1,4 @@
-~~~ WIP ~~~
-
+#### ~~~ WIP ~~~
 *Pull requests gladly accepted*
 
 How to Configure a Mail Server with Webmin on Ubuntu 12.04
@@ -7,15 +6,15 @@ How to Configure a Mail Server with Webmin on Ubuntu 12.04
 
 ### Introduction
 
-Webmin is a web-based, server configuration tool &ndash; or, control panel &ndash; and its versatility allows even novice Linux users to deploy, and administer, a full-fledged mail server.
+Webmin is a web-based, server configuration tool &ndash; or, control panel, like cPanel and Plesk &ndash; and its versatility allows even novice Linux users to deploy, and administer, a full-fledged mail server.
 
-## Server Specifications
+## Server Setup
 
-First, follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of <code>Ubuntu Server 12.04</code>.
+First, follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of <code>Ubuntu 12.04 Server</code>.
 
-### 32-bit vs. 64-bit systems
+#### 32-bit vs. 64-bit systems
 
-Webmin uses approximately 10-12 MB of memory on a 32-bit system and about 50% more on a 64-bit system. If you deploy a cloud server with less than 3 GB of RAM, a 32-bit operating system is recommended; and this is especially true if you have 1 GB, or less, of RAM. Processes can require significantly more memory on 64-bit architecture. If you have RAM constraints, any performance benefits that one might gain from a 64-bit operating system would be undone by having less memory available for buffers and caching.
+A 32-bit operating system is recommended for cloud servers with less than 3 GB of RAM &ndash; this is _especially_ true for servers with 1 GB, or less, of RAM. Processes can require significantly more memory on the 64-bit architecture. On servers with a limited amount of RAM, any performance benefits that one might gain from a 64-bit operating system would be diluted by having less memory available for buffers and caching.
 
 >#### SSH Keys
 >
@@ -24,23 +23,31 @@ Webmin uses approximately 10-12 MB of memory on a 32-bit system and about 50% mo
 1. Create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); **and**
 2. Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
 
+Then, complete the steps outlined in [Initial Server Setup with Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04).
+
+>#### For low-memory systems
+
+>If you deployed a cloud server with 512MB of RAM, you're best advised to add swap. *See* [How To Add Swap on Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-add-swap-on-ubuntu-12-04). Allowing Webmin to swap out infrequently-used processes, and data, leaves more memory available for active processes.
+
 ### Set the Hostname and FQDN in <code>/etc/hosts</code>
 
 Next, follow the steps outlined in [Setting the Hostname & Fully Qualified Domain Name (FQDN) on Ubuntu 12.04 or CentOS 6.4](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/blob/master/set_hostname_fqdn_on_ubuntu_centos.md).
-
-#### For low-memory systems
-
-If you deployed a cloud server with 512MB of RAM, you're best advised to add swap. *See* [How To Add Swap on Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-add-swap-on-ubuntu-12-04). Allowing Webmin to swap out infrequently-used processes, and data, leaves more memory for active processes.
 
 ## Deploy Webmin
 
 Now, follow the steps in [How to Install Webmin on an Ubuntu Cloud Server | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-install-webmin-on-an-ubuntu-cloud-server) to deploy the Webmin control panel.
 
-One of Webmin's benefits is that it is extendable via modules. Modules make it easy to add new functionality to your server.
+## Assumption
 
-## Configure Postfix Module
+This article assumes that you do **not** wish to manage your DNS records via Webmin.
 
-## Configure Dovecot Module
+## Webmin Modules
+
+One of Webmin's benefits is that its capabilities can be expanded via modules. Modules make it easy to add new functionality to your server.
+
+### Configure Postfix Module
+
+### Configure Dovecot Module
 
 ## DNS Records
 
@@ -63,6 +70,5 @@ As always, if you need help with the steps outlined in this How-To, look to the 
 
 <p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; DATE</div></p>
 
-~~ WIP ~~~
-
+#### ~~ WIP ~~~
 *Pull requests gladly accepted*
