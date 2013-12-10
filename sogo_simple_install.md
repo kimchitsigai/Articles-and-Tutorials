@@ -27,7 +27,7 @@ SOGo places an emphasis on scalability. Thus, several user-authentication method
 
 SOGo will literally transform these loosely-coupled components into an efficient, integrated groupware solution, which can be accessed from (i) your favorite web browser; (ii) a variety of desktop clients; and (iii) mobile devices.
 
-## Prerequisites
+## Server Setup
 
 1. Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of an `Ubuntu 12.04 server`.
 
