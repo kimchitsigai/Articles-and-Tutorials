@@ -84,9 +84,21 @@ Finally, execute:
 
 	cd /usr/src/asterisk* && sudo ./configure && sudo make menuselect && sudo make && sudo make install && sudo make config && sudo make samples
 
-## Start DAHDI
+## Start PBX Services
 
+To start DAHDI, execute:
 
+	sudo service dahdi start
+
+To start Asterisk:
+
+	sudo service asterisk start
+
+## Verify Successful Install
+
+To connect to the Asterisk CLI, execute:
+
+	sudo asterisk -rvvv
 
 ## Configure Outgoing-Mail Server
 
