@@ -5,7 +5,7 @@ How To Install FreePBX on CentOS 6.4
 
 Since the introduction of the private branch exchange (PBX) in the 1970s, companies have become dependent on the many features that were introduced over time. Today, businesses have a variety of options when it comes to telephone systems. Many are choosing the cloud with a hosted PBX solution in order to reduce capital expenses, maintenance &amp; upgrade costs &ndash; while still reaping the benefits of the latest PBX features.
 
-This article aims to provide a guide through the (initial) planning and deployment of a FreePBX &amp; Asterisk VoIP server and assumes you will be starting from a base install of `CentOS 6.4`.
+This article aims to provide a guide through the (initial) planning and deployment of a [FreePBX](http://www.freepbx.org/) &amp; [Asterisk](http://www.asterisk.org/) VoIP server and assumes you will be starting from a base install of `CentOS 6.4`.
 
 ## What is a PBX?
 
@@ -64,26 +64,30 @@ Voice quality on VoIP calls is affected by network latency, among other factors.
 
 ### Accessing VoIP Server After Deployment
 
-To access your IP PBX server after deployment, you will need to open a web browser and navigate to your cloud server's IP address or fully qualified domain name (FQDN). If you wish to assign a FQDN to your VoIP server, make sure that you assign a FQDN as your server's hostname &ndash; when you create your DigitalOcean cloud server in the next step &ndash; via the DigitalOcean Control Panel. 
+To access your IP PBX server after deployment, you will need to open a web browser and navigate to your cloud server's IP address or fully qualified domain name (FQDN). If you wish to assign a FQDN to your VoIP server, make sure that you assign a FQDN as your server's hostname &ndash; when you create your DigitalOcean cloud server in the next step &ndash; via the [DigitalOcean Control Panel](https://www.digitalocean.com/community/articles/the-digitalocean-control-panel). 
 
 ### Server Specifications
 
-Deciding on the best size machine for your cloud IP-PBX server is not an exact science. Try to best anticipate your average call volume; and then follow the steps outlined in: [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy a `64-bit CentOS 6.4` virtual private server (VPS).
+Deciding on the best size machine for your cloud IP-PBX server is not an exact science. Try to best anticipate your average call volume; and then follow the steps outlined in: [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy a `CentOS 6.4` virtual private server (VPS).
 
 >#### SSH Keys
 >
-For increased security, it's advisable that you create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to [How To Create SSH Keys with PuTTY to Connect to a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps), instead).
+>For increased security, it is advisable that you:
+>
+>* Create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); _**and**_
+>* Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
 
-Generally speaking, a:
-
-*  512 MB droplet can support approximately `5-15` concurrent calls
-*  1 GB supports approx. `15-25` concurrent calls
-*  2 GB supports approx. `25-50` concurrent calls
-*  4 GB supports approx. `50-100` concurrent calls
-*  8 GB supports approx. `100-175` concurrent calls
-*  16 GB supports approx. `175+` concurrent calls
-
-**NOTE:** It is safe to "guess low." If you underestimate your call volume, try adding swap space. *See* [How To Add Swap on CentOS 6 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-add-swap-on-centos-6). In addition, DigitalOcean makes it easy to resize your cloud server, later. *See* [How To Resize Droplets Using Snapshots | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-resize-droplets-using-snapshots).
+Generally speaking, a VPS with:
+<table>
+<tr><th>Memory</th><th>Concurrent Calls</th></tr>
+<tr><td>512 MB</td><td>Supports approx. 5-15</td></tr>
+<tr><td>1 GB</td><td>Supports approx. 15-25</td></tr>
+<tr><td>2 GB</td><td>Supports approx. 25-50</td></tr>
+<tr><td>4 GB</td><td>Supports approx. 50-100</td></tr>
+<tr><td>8 GB</td><td>Supports approx. 100-175</td></tr>
+<tr><td>16 GB</td><td>Supports approx. 175+</td></tr>
+</table>
+**NOTE:** It is safe to "guess low." If you underestimate your call volume, try adding swap space. *See* [How To Add Swap on CentOS 6 | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-add-swap-on-centos-6). In addition, DigitalOcean makes it easy to resize your cloud server, later.
 
 ### Set the Hostname and FQDN in `/etc/hosts`
 
@@ -211,7 +215,7 @@ Make sure to save each upgrade-script in `~/FreePBX/UpdateScripts`.
 
 ### Confirm Successful Installation
 
-To confirm that FreePBX &amp; Asterisk were installed successfully, open a web browser and navigate to your cloud server's FQDN or IP address, and you should be greeted by the FreePBX administrator-account setup screen.
+To confirm that FreePBX &amp; Asterisk were installed successfully, open a web browser and navigate &ndash; via <code>https://</code> &ndash; to your cloud server's FQDN or IP address, and you should be greeted by the FreePBX administrator-account setup screen.
 
 ![FreePBX Account Setup](http://i.imgur.com/AQPW20I.png)
 
@@ -240,4 +244,6 @@ To continue tailoring your Asterisk VoIP server to your specific environment, ch
 * [FreePBX Forums](http://www.freepbx.org/forums)
 * [New FreePBX Users | Guide to Diagnosing Problems](http://www.freepbx.org/support/documentation/howtos/howto-new-freepbx-users-guide-to-diagnosing-problems)
 
-<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; 11/19/2013</div></p>
+As always, if you need help with the steps outlined in this How-to, look to the DigitalOcean Community for assistance by posing your question(s), below.
+
+<p><div style="text-align: right; font-size:smaller;">Article submitted by: <a href="https://plus.google.com/107285164064863645881?rel=author" target="_blank">Pablo Carranza</a> &bull; Updated 12/19/2013</div></p>
