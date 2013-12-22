@@ -65,7 +65,7 @@ Next, you must add SOGo's GPG public key to Ubuntu's `apt keyring`. To do so, ex
 
 Then, update your lists of available software packages, by executing:
 
-	sudo apt-get update && sudo apt-get -y upgrade
+	sudo apt-get update
 
 ## SOGo Installation
 
@@ -79,18 +79,27 @@ Next, execute:
 
 	sudo apt-get -y install postgresql sope4.9-gdl1-postgresql
 
-Next, create the SOGo database in PostgreSQL:
+Next, create the SOGo database in PostgreSQL. Start by switching to the PostgreSQL user:
 
-	su - postgres
+	sudo su - postgres
+
+Then, execute:
+
 	createuser --no-superuser --no-createdb --no-createrole --encrypted --pwprompt sogo
 
-The system will respond with the following: `Enter password for new role:`
+The system will respond with the following request: `Enter password for new role:`
 
 To which, enter `sogo`. The system will then ask you to `Enter it again:`. Do so and press the <code>Enter</code> key. Then, execute:
 
 	createdb -O sogo sogo
+
+Now, exit the `postgres` user mode:
+
 	exit
-	echo "host sogo sogo 127.0.0.1/32 md5" >> /etc/postgresql/9.1/main/pg_hba.conf
+
+Then, execute:
+
+	echo "host sogo sogo 127.0.0.1/32 md5" | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf
 
 Finally, restart PostgreSQL:
 
@@ -100,7 +109,7 @@ Finally, restart PostgreSQL:
 
 Next, modify the SOGo configuration file to reflect the database settings, by entering each of the following commands individually:
 
-	su - sogo -s /bin/bash
+	sudo su - sogo -s /bin/bash
 	defaults write sogod SOGoProfileURL "postgresql://sogo:sogo@localhost:5432/sogo/sogo_user_profile"
 	defaults write sogod OCSFolderInfoURL "postgresql://sogo:sogo@localhost:5432/sogo/sogo_folder_info"
 	defaults write sogod OCSSessionsFolderURL "postgresql://sogo:sogo@localhost:5432/sogo/sogo_sessions_folder"
@@ -122,7 +131,7 @@ If you want to allow users to add their own IMAP account in SOGo, add the follow
 
 	defaults write sogod SOGoMailAuxiliaryUserAccountsEnabled YES
 
-Logout of the `sogo` user & return to the `root` user
+Logout of the `sogo` user & return to your system user
 
 	exit
 
