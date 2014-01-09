@@ -65,7 +65,41 @@ Next, you must add SOGo's GPG public key to Ubuntu's `apt keyring`. To do so, ex
 
 Then, update your lists of available software packages, by executing:
 
-	sudo apt-get update
+	sudo apt-get update && sudo apt-get -y dist-upgrade && sudo apt-get -y autoremove && sudo reboot now
+
+## Postfix & Dovecot Installation
+
+A convenient option for installing and configuring Postfix for SMTP-AUTH is to use Ubuntu's <code>mail-stack-delivery</code> package. The mail stack provides fully operational delivery with safe defaults and additional options.
+
+Out of the box, the mail stack supports IMAP, POP3 and SMTP services with SASL authentication and Maildir as default storage engine. This package will install Dovecot and configure Postfix to use it for both SASL authentication and as a Mail Delivery Agent (MDA). The package also configures Dovecot for IMAP, IMAPS, POP3, and POP3S.
+
+	sudo apt-get -y install mail-stack-delivery
+
+## SSL Certificate
+
+If you do not own a commercial SSL Certificate, you have two options:
+
+* Obtain a free certificate from StartSSL, *see* [How To Set Up Apache with a Free Signed SSL Certificate on a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-set-up-apache-with-a-free-signed-ssl-certificate-on-a-vps); or
+* Create  a self-signed certificate. *See* [How To Create a SSL Certificate on Apache for Ubuntu 12.04](https://www.digitalocean.com/community/articles/how-to-create-a-ssl-certificate-on-apache-for-ubuntu-12-04).
+
+#### SSL Directories
+
+Once you have an SSL certificate and key, execute:
+
+	sudo vim /etc/postfix/main.cf
+
+>Then, tap on the <code>i</code> key (on your keyboard) to enter the Vim text editor's "insert mode."
+
+and change the following options:
+
+	smtpd_tls_cert_file = /etc/ssl/certs/mail.pem
+	smtpd_tls_key_file = /etc/ssl/private/mail.key
+
+>To save your edit, and exit, tap the following keys: <code>Esc</code>,<code>:</code>, <code>w</code>, <code>q</code>, <code>Enter</code>.
+
+Finally, restart Postfix & Dovecot:
+
+	sudo service postfix restart && sudo service dovecot restart
 
 ## SOGo Installation
 
@@ -77,7 +111,7 @@ Install SOGo by executing:
 
 Next, execute:
 
-	sudo apt-get -y install postgresql sope4.9-gdl1-postgresql
+	sudo apt-get -y install postgresql sope4.9-gdl1-postgresql postfix-pgsql
 
 Next, create the SOGo database in PostgreSQL. Start by switching to the PostgreSQL user:
 
@@ -101,9 +135,76 @@ Then, execute:
 
 	echo "host sogo sogo 127.0.0.1/32 md5" | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf
 
-Finally, restart PostgreSQL:
+Now, execute:
+
+	sudo vim /etc/postgresql/9.1/main/pg_ident.conf
+
+Append the following to the end of that file:
+
+	mailmap         dovecot                 mailreader
+	mailmap         postfix                 mailreader
+	mailmap         root                    mailreader
+
+Then, execute:
+
+	sudo vim /etc/postgresql/9.1/main/pg_hba.conf
+
+and look for the line that reads <code>Put your actual configuration here</code>. Add the following, immediate after that line:
+
+	local       mail    all     peer map=mailmap
+
+Restart PostgreSQL:
 
 	sudo service postgresql restart
+
+### Set Up the Database
+
+Switch to the PostgreSQL user:
+
+	sudo su - postgres
+
+Execute the following commands, individually:
+
+	CREATE USER mailreader;
+	REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+	REVOKE USAGE ON SCHEMA public FROM PUBLIC;
+	GRANT CREATE ON SCHEMA public TO postgres;
+	GRANT USAGE ON SCHEMA public TO postgres;
+	CREATE DATABASE mail WITH OWNER mailreader;
+	\q 
+	sudo psql -U mailreader -d mail
+	\c mail
+
+	CREATE TABLE aliases (
+		alias text NOT NULL,
+		email text NOT NULL
+	);
+	CREATE TABLE users (
+		email text NOT NULL,
+		password text NOT NULL,
+		maildir text NOT NULL,
+		created timestamp with time zone DEFAULT now()
+	);
+	ALTER TABLE aliases OWNER TO mailreader;
+	ALTER TABLE users OWNER TO mailreader;
+	\q
+
+You can now add virtual mailboxes, from the command line:
+
+	doveadm pw -s sha512 -r 100
+	Enter new password: ...
+	Retype new password: ...
+	{SHA512}.............................................................==
+	psql -U mailreader -d mail
+	INSERT INTO users (
+		email,
+		password,
+		maildir
+	) VALUES (
+		'foo@yourdomain.tld',
+		'{SHA512}.............................................................==',
+		'foo/'
+	);
 
 ## Configure SOGo
 
@@ -177,40 +278,6 @@ and add the `-b` argument at lines 70 and 88:
 #### Restart SOGo:
 
 	sudo service sogo restart	
-
-## Postfix & Dovecot Installation
-
-A convenient option for installing and configuring Postfix for SMTP-AUTH is to use Ubuntu's <code>mail-stack-delivery</code> package. The mail stack provides fully operational delivery with safe defaults and additional options.
-
-Out of the box, the mail stack supports IMAP, POP3 and SMTP services with SASL authentication and Maildir as default storage engine. This package will install Dovecot and configure Postfix to use it for both SASL authentication and as a Mail Delivery Agent (MDA). The package also configures Dovecot for IMAP, IMAPS, POP3, and POP3S.
-
-	sudo apt-get -y install mail-stack-delivery
-
-## SSL Certificate
-
-If you do not own a commercial SSL Certificate, you have two options:
-
-* Obtain a free certificate from StartSSL, *see* [How To Set Up Apache with a Free Signed SSL Certificate on a VPS | DigitalOcean](https://www.digitalocean.com/community/articles/how-to-set-up-apache-with-a-free-signed-ssl-certificate-on-a-vps); or
-* Create  a self-signed certificate. *See* [How To Create a SSL Certificate on Apache for Ubuntu 12.04](https://www.digitalocean.com/community/articles/how-to-create-a-ssl-certificate-on-apache-for-ubuntu-12-04).
-
-#### SSL Directories
-
-Once you have an SSL certificate and key, execute:
-
-	sudo vim /etc/postfix/main.cf
-
->Then, tap on the <code>i</code> key (on your keyboard) to enter the Vim text editor's "insert mode."
-
-and change the following options:
-
-	smtpd_tls_cert_file = /etc/ssl/certs/mail.pem
-	smtpd_tls_key_file = /etc/ssl/private/mail.key
-
->To save your edit, and exit, tap the following keys: <code>Esc</code>,<code>:</code>, <code>w</code>, <code>q</code>, <code>Enter</code>.
-
-Finally, restart Postfix & Dovecot:
-
-	sudo service postfix restart && sudo service dovecot restart
 
 ## Security Hardening
 
