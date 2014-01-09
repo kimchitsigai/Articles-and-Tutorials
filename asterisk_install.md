@@ -1,11 +1,11 @@
 #### ~~~ WIP ~ Draft ~ WIP ~~~
 *[Pull Requests](https://github.com/DigitalOcean-User-Projects/Articles-and-Tutorials/pulls)* gladly accepted
-How to Install Asterisk 11 on Ubuntu 12.04
+How to Install the Asterisk 11 LTS PBX Server on Ubuntu 12.04
 =
 
 ### Introduction
 
-
+Asterisk is an open source, software implementation of a Private Branch Exchange (PBX). Asterisk is used by small &amp; medium sized businesses and large enterprises &ndash; in addition to call centers, carriers, and government agencies.
 
 ## Pre-deployment Planning
 
@@ -15,22 +15,15 @@ First, you must make a few structural decisions, before you deploy your cloud PB
 
 Voice quality on VoIP calls is affected by network latency, among other factors. Thus, it is advisable to select a datacenter that is closest to the general, geographic location of the majority of your anticipated calls.
 
-#### Accessing VoIP Server After Deployment
-
-To access your IP PBX server after deployment, you will need to open a web browser and navigate to your cloud server's IP address or fully qualified domain name (FQDN). If you wish to assign a FQDN to your VoIP server, make sure that you assign a FQDN as your server's hostname &ndash; when you create your DigitalOcean cloud server in the next step &ndash; via the DigitalOcean Control Panel.
-
 ## Server Setup
 
-1. Follow the steps outlined in [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server) to deploy the latest release of an `Ubuntu 12.04 server`.
+Follow the steps outlined in:
 
-	>#### SSH Keys
-	>
-	>For increased security, it is advisable that you:
-	>
-	>* Create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets) (**Windows users:** Refer to the article cited, next); **and**
-	>* Disable password logins. *See* [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps).
+* [How To Create Your First DigitalOcean Droplet Virtual Server](https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server)
 
-2. Follow the steps in [Initial Server Setup with Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04).
+	>For increased security, it is advisable that you create your droplet with pre-installed SSH keys. *See* [How To Use SSH Keys with DigitalOcean Droplets](https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets). **Windows users:** Refer [How To Create SSH Keys with PuTTY to Connect to a VPS](https://www.digitalocean.com/community/articles/how-to-create-ssh-keys-with-putty-to-connect-to-a-vps)
+* [Initial Server Setup with Ubuntu 12.04 | DigitalOcean](https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04).
+	>* For added security, it is advisable that you disable password logins. *See*.
 
 #### Hostname & FQDN
 
@@ -48,57 +41,77 @@ and follow the instructions in the ensuing, on-screen prompts.
 
 To make sure that your server operating system (OS) is up to date, execute:
 
-	sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade && sudo apt-get -y autoremove && sudo reboot now
+	sudo apt-get update && sudo apt-get -y dist-upgrade && sudo apt-get -y autoremove && sudo reboot now
 
-When the update completes, the server will reboot.
-
-## Install Asterisk Dependencies
-
-Next, execute:
-
-	sudo apt-get -y install build-essential wget libssl-dev libncurses5-dev libnewt-dev  libxml2-dev linux-headers-$(uname -r) libsqlite3-dev uuid-dev
+When the update completes, the server will reboot to make sure that all of the software upgrades take effect.
 
 ## Download Source Files
 
-Even though Asterisk is packaged in Ubuntu's software repositories, the Asterisk release housed in the repos is out-dated. To download &amp; extract the most-recent versions of DAHDI, libpri &amp; Asterisk, execute:
+Even though Asterisk is packaged in Ubuntu's software repositories, the Asterisk release housed in the repos is out-dated. To download and extract the source files of the most-recent Long Term Support (LTS) version of Asterisk:
 
-	cd /usr/src/ && sudo wget -O - "http://downloads.asterisk.org/pub/telephony/dahdi-linux-complete/dahdi-linux-complete-current.tar.gz" | sudo tar zxvf - && sudo wget -O - "http://downloads.asterisk.org/pub/telephony/libpri/libpri-1.4-current.tar.gz" | sudo tar zxvf - && sudo wget -O - "http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-11-current.tar.gz" | sudo tar zxvf -
+	cd /usr/src/ && sudo wget -O - "http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-11-current.tar.gz" | sudo tar xzf -
 
-## Install DAHDI
+## Install Asterisk Dependencies
 
-Now, execute:
+Asterisk is prepackaged with scripts that will install most of the needed dependencies. To use the scripts included with the Asterisk source files, execute:
 
-	cd /usr/src/dahdi-linux-complete* && sudo make && sudo make install && sudo make config
+	cd asterisk*/contrib/scripts && sudo ./install_prereq install && sudo ./install_prereq install-unpackaged
 
-## Install libpri
+#### Select Country Code
 
-Next, execute:
+During the installation of the dependencies, you will be prompted to enter the code for the country from which your phone system will be operating, as depicted below:
 
-	cd /usr/src/libpri* sudo make && sudo make install
+![Enter your country code](http://i.imgur.com/37iznpU.png)
+
+Enter the number <code>1</code> for North America, including the United States or Canada; tap on the <code>Tab</code> key, to highlight <code>&lt;Ok></code>; and press <code>Enter</code>.
+
+>Wikipedia maintains a [list of country codes](http://en.wikipedia.org/wiki/List_of_country_calling_codes).
 
 ## Install Asterisk
 
-Finally, execute:
-
->During the installation, the system will present an <code>Asterisk Module and Build Option Selection</code> menu. For a default install, tap on the <code>Tab</code> to highlight <code>Save & Exit</code>, and press <code>Enter</code> to allow the install to continue.
+Now, execute:
 
 	cd /usr/src/asterisk* && sudo ./configure && sudo make menuselect && sudo make && sudo make install && sudo make config && sudo make samples
 
+>During the installation, the system will present an <code>Asterisk Module and Build Option Selection</code> menu. For a default install, tap on the <code>Tab</code> to highlight <code>Save & Exit</code>, and press <code>Enter</code> to allow the install to continue. For more about using Menuselect, please refer to the Asterisk Wiki: [Using Menuselect to Select Asterisk Options](https://wiki.asterisk.org/wiki/display/AST/Using+Menuselect+to+Select+Asterisk+Options).
+
 ## Start PBX Services
 
-To start DAHDI, execute:
-
-	sudo service dahdi start
-
-To start Asterisk:
+To start Asterisk, execute:
 
 	sudo service asterisk start
 
+Asterisk should now be running in the background.
+
 ## Verify Successful Install
 
-To connect to the Asterisk CLI, execute:
+To connect to the Asterisk command-line interface (CLI), execute:
 
-	sudo asterisk -rvvv
+	asterisk -rvvv
+
+>The <code>-r</code> parameter tells the system that you want to re-connect to the Asterisk service. Each  <code>v</code> parameter increases the verbosity level when you connect to the Asterisk CLI.
+
+For help in the CLI mode, execute:
+
+	help
+
+If you would like to exit the Asterisk console and return to your shell, execute:
+
+	quit
+
+## Sample Configuration Files
+
+Sample configuration files can be found in the default directory: <code>/etc/asterisk/</code>. Create backups of these files:
+
+>Execute each line individually.
+
+	cd /etc/asterisk
+	sudo mv modules.conf modules.conf.sample
+	sudo mv extensions.conf extensions.conf.sample 
+	sudo mv sip.conf sip.conf.sample
+	sudo mv iax.conf iax.conf.sample
+
+and use them as templates to create new configurations for testing or production purposes. 
 
 ## Configure Outgoing-Mail Server
 
@@ -109,6 +122,11 @@ To receive email notifications from your Asterisk server, follow the steps outli
 Any server accessible from the public Internet should be security hardened, and an Asterisk IP-PBX is no exception. Security best practices, however, are not within the scope of this article.
 
 ## Additional Resources
+
+* [Asterisk Documentation](http://www.asterisk.org/community/documentation)
+* [Asterisk Forums](http://forums.asterisk.org/)
+* [Asterisk Mailing Lists &amp; Chat Channels on IRC](http://www.asterisk.org/community/discuss)
+* [Asterisk Wiki](https://wiki.asterisk.org/wiki/display/AST/Home)
 
 As always, if you need help with the steps outlined in this How-to, look to the DigitalOcean Community for assistance by posing your question(s), below.
 
